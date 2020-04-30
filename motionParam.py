@@ -23,5 +23,6 @@ class FoilParam(object):
         for x in range(samp):
             self.time[x] = round(x*dt,5)
             self.h[x] = 2*pi*f*self.h0*math.cos(2*pi*f*self.time[x]+pi/2)
+            
 
 k008 = FoilParam(1.6,70,0.1,4)
