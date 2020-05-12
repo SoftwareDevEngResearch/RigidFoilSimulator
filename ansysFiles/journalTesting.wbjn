@@ -1,0 +1,19 @@
+﻿# encoding: utf-8
+# 2020 R1
+SetScriptVersion(Version="20.1.164")
+template1 = GetTemplate(TemplateName="Fluid Flow")
+system1 = template1.CreateSystem()
+
+parameter1 = Parameters.CreateP
+parameter1.Expression = 10
+
+geometry1 = system1.GetContainer(ComponentName="Geometry")
+geometry1.Edit(IsSpaceClaimGeometry=True)
+geometry1.SendCommand(Command=SCRigidScript.scsript)
+
+Save(
+    FilePath="C:/Users/vicki/RigidFoilCFD/journalTesting.wbpj",
+    Overwrite=True)
+
+mesh1 = system1.GetContainer(ComponentName="Mesh")
+mesh1.Edit()
