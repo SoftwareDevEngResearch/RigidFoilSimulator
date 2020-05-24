@@ -78,24 +78,32 @@ class FoilProf(object):
             self.h[x] = 2*pi*f*self.h0*cos(2*pi*f*ti+pi/2)
             self.theta[x] = 2*pi*f*self.theta0*cos(2*pi*f*ti)
     def update_h0(self,hc):
-        self.h = hc*self.chord
-        print("New heaving amplitude = ", self.h)
+        self.h0 = hc*self.chord
+        samp = int(np.ceil(self.T/self.dt) + 1)
+        self.h = [0]*samp
+        for x in range(samp):
+            ti = round(x*self.dt,5)
+            self.h[x] = 2*pi*self.f*self.h0*cos(2*pi*self.f*ti+pi/2)
+        print("New heaving amplitude = ", self.h0)
+    update_h0(self,0.3)
 
+if __name__ == "__main__":
+    """testing script functionality"""
 
-k008 = FoilProf(1.6,70,1000)
-plt.plot(k008.time, k008.h, label = "heaving velocity")
-plt.plot(k008.time, k008.theta, label = "pitching velocity")
-plt.xlabel('time [s]')
-plt.legend()
-# plt.show()
-test = k008.update_h0(0.3)
+    k008 = FoilProf(1.6,70,1000)
+    plt.plot(k008.time, k008.h, label = "heaving velocity")
+    plt.plot(k008.time, k008.theta, label = "pitching velocity")
+    plt.xlabel('time [s]')
+    plt.legend()
+    # plt.show()
+    # test = k008.update_h0(0.3)
 
-check = FoilGeo()
-check.gen_foilshape()
-print(check.LExT)
-print(check.TExT)
-print(check.LEyT)
-print(check.TEyT)
+    check = FoilGeo()
+    check.gen_foilshape()
+    print(check.LExT)
+    print(check.TExT)
+    print(check.LEyT)
+    print(check.TEyT)
 
 def mod_geoScript(foil):
     """Takes the foil geometry and create script for importing to Ansys"""
