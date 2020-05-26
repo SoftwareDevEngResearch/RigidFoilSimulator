@@ -1,4 +1,4 @@
-# State file created:  2020/05/18 23:45:25
+# State file created:  2020/05/25 18:16:46
 # CFX-20.1
 
 COMMENT:User Data
@@ -466,7 +466,7 @@ template_files\dp0\FFF\Fluent\FFF-3-00010.dat.gz
       Full Circle = Off
       Hub Curve Mode = From Turbo Region
       Inlet Curve Mode = From Turbo Region
-      Inlet Region = /DATA READER/CASE:Case FFF/BOUNDARY:inlet
+      Inlet Region = inlet
       Instance Definition = From File
       Linear Blade Aligned Variable Available = false
       Number of Components in 360 = 1
@@ -475,7 +475,7 @@ template_files\dp0\FFF\Fluent\FFF-3-00010.dat.gz
       Number of Passages in 360 = 1
       Number of Passages in Component = 1
       Outlet Curve Mode = From Turbo Region
-      Outlet Region = /DATA READER/CASE:Case FFF/BOUNDARY:outlet
+      Outlet Region = outlet
       Principal Axis = Z
       Reflection Plane Option = From Plane
       Rotation Angle = 0 [degree]
