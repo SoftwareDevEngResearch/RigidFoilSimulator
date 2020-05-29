@@ -82,3 +82,4 @@ if __name__ == "__main__":
     folder_path = os.getcwd()+"\\WallShearData"
     foilProfile = mP.FoilProf(1.6,0.15/2,70,0.15,1000)
     process_wallshear_data(folder_path, foilProfile)
+

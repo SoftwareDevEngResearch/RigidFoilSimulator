@@ -20,7 +20,7 @@ class FoilGeo(object):
         self.trailing_ellipse_origin = chord/2 - self.trailing_ellipse_x
         self.chord = chord
         
-        #Solve for lines tangent to the leading and trailing edge ellipses
+        #Solve for tangent lines to the leading and trailing edge ellipses
         m, k = symbols('m k')
         eq1 = Eq((self.leading_ellipse_x**2*k*m - self.leading_ellipse_origin*self.leading_ellipse_y**2)**2 - (self.leading_ellipse_y**2+self.leading_ellipse_x**2*m**2)*(self.leading_ellipse_origin**2*self.leading_ellipse_y**2+self.leading_ellipse_x**2*k**2-self.leading_ellipse_y**2*self.leading_ellipse_x**2),0)
         eq2 = Eq((self.trailing_ellipse_x**2*k*m - self.trailing_ellipse_origin*self.trailing_ellipse_y**2)**2 - (self.trailing_ellipse_y**2+self.trailing_ellipse_x**2*m**2)*(self.trailing_ellipse_origin**2*self.trailing_ellipse_y**2+self.trailing_ellipse_x**2*k**2-self.trailing_ellipse_y**2*self.trailing_ellipse_x**2),0)
@@ -51,7 +51,7 @@ class FoilGeo(object):
         trailing edge width : % s \n \
         " % (self.chord, self.leading_ellipse_y, self.leading_ellipse_x, self.trailing_ellipse_y, self.trailing_ellipse_x)
 
-
+      
 class FoilProf(object):
     """Foil parameters are all parameters involved in the motion generation"""
     # class body definition
@@ -78,7 +78,7 @@ class FoilProf(object):
             #self.h_dot[x] = 2*pi*f*self.h0*cos(2*pi*f*ti+pi/2)
             #self.theta_dot[x] = 2*pi*f*self.theta0*cos(2*pi*f*ti)
 
-
+            
 if __name__ == "__main__":
     """testing script functionality"""
 
@@ -95,3 +95,4 @@ if __name__ == "__main__":
     # print(check.trailing_ellipse_xT)
     # print(check.leading_ellipse_yT)
     # print(check.trailing_ellipse_yT)
+
