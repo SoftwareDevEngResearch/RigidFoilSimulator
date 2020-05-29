@@ -72,7 +72,7 @@ class FoilProf(object):
         for x in range(samp):
             ti = round(x*self.dt,5)
             self.time[x] = ti
-            self.h[x] = self.h0*cos(2*pi*x/steps_per_cycle)
+            self.h[x] = self.h0*cos(2*pi*x/steps_per_cycle)-self.h0
             self.theta[x] = self.theta0*cos(2*pi*x/steps_per_cycle+pi/2)
             ## These are the heaving and pitching rates
             #self.h_dot[x] = 2*pi*f*self.h0*cos(2*pi*f*ti+pi/2)
@@ -87,7 +87,7 @@ if __name__ == "__main__":
     #plt.plot(k.time, k.theta, label = "pitching velocity")
     plt.xlabel('time [s]')
     plt.legend()
-    #plt.show()
+    plt.show()
     print()
     
     check = FoilGeo()
