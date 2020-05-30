@@ -32,19 +32,25 @@ def add_data_columns(file_path, chord, theta, h):
         data = variable_names
         
         for line in file_object:
+            # Get data from each line and calculate the rotated position
             cols = np.array([float(i) for i in line.replace(","," ").strip().split()])
             cols[2] = cols[2] - h
             xyR = np.dot(R, cols[1:3]) + [chord/2, 0]
+            
+            # Filter to only collect data for the leading edge of the correct surface
             top_bottom = int(1 if xyR[1] > 0 else -1)
-            frontal_region = int(1 if xyR[0] < 0.3*chord else -1)
+            frontal_region = int(1 if xyR[0] < 0.2*chord else -1)
+    
             if top_bottom*theta > 0 and frontal_region == 1: 
                 wallshear = cols[x_wallshear_col]*np.cos(theta)-cols[y_wallshear_col]*np.sin(theta)
                 cols = np.concatenate((cols, xyR, wallshear))
                 data = np.append(data, [cols], axis=0) 
                 
         x_rotated_col = var_count
-        set_data = data[1:,:] 
-        sorted_data = set_data[set_data[:, x_rotated_col].argsort()]
+        
+        # Sort data 
+        set_data = data[1:,:].astype(float)
+        sorted_data = set_data[set_data[:, var_count].argsort()]
         final_data = np.append(variable_names, sorted_data, axis=0)
         #np.savetxt(file_path, final_data[:-1,:], fmt="%s") 
 
@@ -56,26 +62,43 @@ def add_data_columns(file_path, chord, theta, h):
             cols = np.array([float(i) for i in line.replace(","," ").strip().split()])
             final_data = np.append(final_data, [cols], axis=0)       
     file_object.close()
-    
-    return final_data[:,1:]
+   
+    return np.transpose(np.append([final_data[:,-3]], [final_data[:,-1]], axis=0))
 
 def process_wallshear_data(folder_path, foilProfile):
     """Go into wall shear folder and process raw data"""
+    
+    
     file_names = [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
     file_names = list(filter(lambda x:(x.find("les") >= 0 or x.find("wallshear") >0), file_names))
-    #for x in range(3):
+    
+    temp_database = np.empty([0,3])
+    ct = 0
+    
+    #for x in range(6):
     for x in range(len(file_names)):
         file_path = convert_2_txt(folder_path+"\\"+file_names[x])
         time_step = int(file_names[x].split('-')[-1].split('.')[0])
         theta = foilProfile.theta[time_step]
         print('\n FileName = %s \n Time Step [ct] = % s, Theta [deg] = % s' % (file_names[x], time_step, np.degrees(theta)))
+
         if theta != 0:
             processed_data = add_data_columns(file_path, foilProfile.chord, foilProfile.theta[time_step], foilProfile.h[time_step])  
-            print(processed_data.shape)
-            x = processed_data[1:-1, -3].astype(float)
-            y = processed_data[1:-1, -1].astype(float)
-            plt.plot(x,y, label = "Wallshear")
+            processed_data2 = np.append(processed_data, np.full((processed_data.shape[0],1), time_step) , axis=1)
+            temp_database = np.append(temp_database, processed_data2[1:-1,:] ,axis=0)
+            x = processed_data[1:,-2].astype(float)
+            wallshear = processed_data[1:,-1].astype(float)
+            plt.plot(x,wallshear, label = "Wallshear")
             plt.show()
+            #print(wallshear)
+            if np.min(wallshear) < 0 and wallshear[0] > 0:
+                ct = ct + 1
+                if ct == 5:
+                    break
+    print(ct)
+            # plt.plot(x,wallshear, label = "Wallshear")
+            # plt.show()
+
             
 if __name__ == "__main__":
     """testing script functionality"""
