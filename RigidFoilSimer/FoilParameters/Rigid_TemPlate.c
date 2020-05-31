@@ -9,8 +9,8 @@ double current_time = 0.0000 ;
 double vel[3]={0,0,0};/* define initial velocity*/
 double omega[3]={0,0,0};/* define initial angular velocity*/
 static real body_centroid[3]={0,0,0};
-double Chord=0.15,F_density=1.225, Span=1.0; /*chold length, air density, span length (for 2D, span is one*/
-double pi=3.1415926,frequency=1.6,Y_amplitude=0.075,w_amplitude=1.22173,U_flow=2.4; /*the frequency is physical frequency, Y_amplitude is heaving amplitude, w_amplitude is pitching amplitude, U_flow is flow velocity*/
+double Chord=C_chord_length,F_density=C_fluid_density, Span=1.0; /*chold length, air density, span length (for 2D, span is one*/
+double pi=3.1415926,frequency=C_heaving_frequency,Y_amplitude=C_heaving_amplitude,w_amplitude=C_pitching_amplitude,U_flow=C_velocity_inf; /*the frequency is physical frequency, Y_amplitude is heaving amplitude, w_amplitude is pitching amplitude, U_flow is flow velocity*/
 double lift,drag,moment;
 real NV_VEC( value_f ),NV_VEC( value_m );
 real T_coordinate=0.0000;

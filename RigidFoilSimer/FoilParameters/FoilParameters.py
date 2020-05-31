@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from scipy.optimize import fsolve
 from sympy import symbols, Eq, solve
 
+
 pi = np.pi
 cos = np.cos
 
@@ -20,43 +21,46 @@ class FoilGeo(object):
         self.trailing_ellipse_origin = chord/2 - self.trailing_ellipse_x
         self.chord = chord
         
-        #Solve for tangent lines to the leading and trailing edge ellipses
-        m, k = symbols('m k')
-        eq1 = Eq((self.leading_ellipse_x**2*k*m - self.leading_ellipse_origin*self.leading_ellipse_y**2)**2 - (self.leading_ellipse_y**2+self.leading_ellipse_x**2*m**2)*(self.leading_ellipse_origin**2*self.leading_ellipse_y**2+self.leading_ellipse_x**2*k**2-self.leading_ellipse_y**2*self.leading_ellipse_x**2),0)
-        eq2 = Eq((self.trailing_ellipse_x**2*k*m - self.trailing_ellipse_origin*self.trailing_ellipse_y**2)**2 - (self.trailing_ellipse_y**2+self.trailing_ellipse_x**2*m**2)*(self.trailing_ellipse_origin**2*self.trailing_ellipse_y**2+self.trailing_ellipse_x**2*k**2-self.trailing_ellipse_y**2*self.trailing_ellipse_x**2),0)
-        sol_dict = solve((eq1,eq2),(m,k))
+        ## These equations are necessary if you decide to switch to SpaceClaim Geometry Scripting. 
+        ## These are not required for parameterization
+        # #Solve for tangent lines to the leading and trailing edge ellipses
+        # m, k = symbols('m k')
+        # eq1 = Eq((self.leading_ellipse_x**2*k*m - self.leading_ellipse_origin*self.leading_ellipse_y**2)**2 - (self.leading_ellipse_y**2+self.leading_ellipse_x**2*m**2)*(self.leading_ellipse_origin**2*self.leading_ellipse_y**2+self.leading_ellipse_x**2*k**2-self.leading_ellipse_y**2*self.leading_ellipse_x**2),0)
+        # eq2 = Eq((self.trailing_ellipse_x**2*k*m - self.trailing_ellipse_origin*self.trailing_ellipse_y**2)**2 - (self.trailing_ellipse_y**2+self.trailing_ellipse_x**2*m**2)*(self.trailing_ellipse_origin**2*self.trailing_ellipse_y**2+self.trailing_ellipse_x**2*k**2-self.trailing_ellipse_y**2*self.trailing_ellipse_x**2),0)
+        # sol_dict = solve((eq1,eq2),(m,k))
         
-        # Define the equation for tangent lines
-        x, y = symbols('x y')
-        eqT = Eq(sol_dict[1][0]*x+sol_dict[1][1]-y,0)
+        # # Define the equation for tangent lines
+        # x, y = symbols('x y')
+        # eqT = Eq(sol_dict[1][0]*x+sol_dict[1][1]-y,0)
         
-        # Solve for the intersection point at the leading edge ellipse
-        eqE = Eq((x-self.leading_ellipse_origin)**2/self.leading_ellipse_x**2 + y**2/self.leading_ellipse_y**2 - 1,0)
-        sol_xy = solve((eqT,eqE),(x,y))
-        self.leading_ellipse_xT = abs(sol_xy[0][0])
-        self.leading_ellipse_yT = abs(sol_xy[0][1])
+        # # Solve for the intersection point at the leading edge ellipse
+        # eqE = Eq((x-self.leading_ellipse_origin)**2/self.leading_ellipse_x**2 + y**2/self.leading_ellipse_y**2 - 1,0)
+        # sol_xy = solve((eqT,eqE),(x,y))
+        # self.leading_ellipse_xT = abs(sol_xy[0][0])
+        # self.leading_ellipse_yT = abs(sol_xy[0][1])
         
-        # Solve for the intersection point at the trailing edge ellipse
-        eqE = Eq((x-self.trailing_ellipse_origin)**2/self.trailing_ellipse_x**2 + y**2/self.trailing_ellipse_y**2 - 1,0)
-        sol_xy = solve((eqT,eqE),(x,y))
-        self.trailing_ellipse_xT = abs(sol_xy[0][0])
-        self.trailing_ellipse_yT = abs(sol_xy[0][1])
+        # # Solve for the intersection point at the trailing edge ellipse
+        # eqE = Eq((x-self.trailing_ellipse_origin)**2/self.trailing_ellipse_x**2 + y**2/self.trailing_ellipse_y**2 - 1,0)
+        # sol_xy = solve((eqT,eqE),(x,y))
+        # self.trailing_ellipse_xT = abs(sol_xy[0][0])
+        # self.trailing_ellipse_yT = abs(sol_xy[0][1])
     
     def __repr__(self):
-        return "Foil Geometry Parameters: \n \
-        chord length [M] : % s \n \
-        leading edge height [M] : % s \n \
-        leading edge width : % s \n \
-        trailing edge height [M] : % s \n \
-        trailing edge width : % s \n \
+        return "Foil Geometry Parameters [M]: \n \
+        chord length : \t\t % s \n \
+        leading edge height : \t\t % s \t\t\n \
+        leading edge width : \t\t % s \t\t\n \
+        trailing edge height : \t % s \t\t\n \
+        trailing edge width : \t\t % s \t\t\n \
         " % (self.chord, self.leading_ellipse_y, self.leading_ellipse_x, self.trailing_ellipse_y, self.trailing_ellipse_x)
 
       
-class FoilProf(object):
+class FoilDynamics(object):
     """Foil parameters are all parameters involved in the motion generation"""
     # class body definition
     
-    def __init__(self, f, h0, theta0, chord, steps_per_cycle, total_cycles=4, density=1.225):
+    def __init__(self, k, f, h0, theta0, chord, steps_per_cycle, total_cycles=4, density=1.225):
+        self.reduced_frequency = k
         self.freq = f                    
         self.theta0 = np.radians(theta0)
         self.steps_per_cycle = steps_per_cycle
@@ -64,6 +68,7 @@ class FoilProf(object):
         self.T = round(total_cycles/f,6)
         self.rho = density                          #fluid density
         self.chord = chord
+        self.velocity_inf = f*chord/k
         self.h0 = h0
         samp = int(np.ceil(self.T/self.dt) + 1)     #total number of time steps 
         self.time = [0]*samp
@@ -77,22 +82,19 @@ class FoilProf(object):
             ## These are the heaving and pitching rates
             #self.h_dot[x] = 2*pi*f*self.h0*cos(2*pi*f*ti+pi/2)
             #self.theta_dot[x] = 2*pi*f*self.theta0*cos(2*pi*f*ti)
-
+            
             
 if __name__ == "__main__":
     """testing script functionality"""
 
-    k = FoilProf(1.6,0.15/2,70,0.15,1000,4)
+    check = FoilGeo()
+    print(check)
+    
+    k = FoilDynamics(1.6,check.chord/2,70,check.chord,1000,4)
     plt.plot(k.time, k.h, label = "heaving velocity")
     #plt.plot(k.time, k.theta, label = "pitching velocity")
     plt.xlabel('time [s]')
     plt.legend()
-    plt.show()
-    print()
+    # plt.show()
     
-    check = FoilGeo()
-    # print(check.leading_ellipse_xT)
-    # print(check.trailing_ellipse_xT)
-    # print(check.leading_ellipse_yT)
-    # print(check.trailing_ellipse_yT)
 
