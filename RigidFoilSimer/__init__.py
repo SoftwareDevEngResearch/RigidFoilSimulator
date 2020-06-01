@@ -1,2 +1,2 @@
-from . import setup
+from . import InputForm
 from . import RigidFoilSimer

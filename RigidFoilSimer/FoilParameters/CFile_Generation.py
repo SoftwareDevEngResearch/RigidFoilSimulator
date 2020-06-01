@@ -1,36 +1,11 @@
-##RIGID-FOIL-SIMULATION-GENERATOR
-
-## Enter directory folder name to save Simulation Files
-sim_path = r"C:\Users\vicki\Desktop"
-folder_name = r"RigidFoilSimulation"
-
-
-## Enter foil geometry details in units of [M]
-
-chord_length = 0.15            
-leading_edge_height = 0.00325  
-leading_edge_width = chord_length/4
-trailing_edge_height = 0.0002  
-trailing_edge_width = 0.012
-
-
-## Enter dynamic parameter details
-
-reduced_frequency = 0.08                #[-]
-heaving_frequency = 1.6                 #[Hz]
-heaving_amplitude = chord_length*0.5    #[M]
-pitching_amplitude = 70                 #[deg]
-time_steps_per_cycle = 1000             #[-]
-number_of_cycles = 4                    #[-]
-fluid_density = 1.225                   #[kg/m^3]
-
-################################################################################
-
-
 import FoilParameters.FoilParameters as fP
 import sys
 import os
 import numpy as np
+
+MainCodePath = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) 
+sys.path.append(MainCodePath)
+import InputForm as iForm
 
 def query_yes_no(question, default=None):
     """Ask a yes/no question via input() and return their answer.
@@ -93,18 +68,18 @@ def path_check(path):
             sys.exit("User defined function needs to be generated and stored somewhere to proceed")
     return path
 
-FoilGeo = fP.FoilGeo(chord_length, leading_edge_height, leading_edge_width, trailing_edge_height, trailing_edge_width)
+FoilGeo = fP.FoilGeo(iForm.chord_length, leading_edge_height, leading_edge_width, trailing_edge_height, trailing_edge_width)
 print(FoilGeo)
 
 if query_yes_no("Are these the parameters you want to use to generate a user defined function?")== False:
-    sys.exit("\nPlease enter the desired foil parameters into %s" % os.path.basename(__file__))
+    sys.exit("\nPlease enter the desired foil parameters into the input form")
 
-path = sim_path+"\\"+folder_name    
+path = iForm.sim_path+"\\"+iForm.folder_name    
 path = path_check(path)
 
-FD = fP.FoilDynamics(reduced_frequency, heaving_frequency, heaving_amplitude, pitching_amplitude, chord_length, time_steps_per_cycle, number_of_cycles, fluid_density)
+FD = fP.FoilDynamics(iForm.reduced_frequency, iForm.heaving_frequency, iForm.heaving_amplitude, iForm.pitching_amplitude, iForm.chord_length, iForm.time_steps_per_cycle, iForm.number_of_cycles, iForm.fluid_density)
 
-parameter_search = np.array([[chord_length, 'C_chord_length'], [fluid_density, 'C_fluid_density'], [heaving_frequency, 'C_heaving_frequency'], [heaving_amplitude, 'C_heaving_amplitude'], [FD.theta0, 'C_pitching_amplitude'], [FD.velocity_inf, 'C_velocity_inf']])
+parameter_search = np.array([[FoilGeo.chord, 'C_chord_length'], [iForm.fluid_density, 'C_fluid_density'], [iForm.heaving_frequency, 'C_heaving_frequency'], [iForm.heaving_amplitude, 'C_heaving_amplitude'], [FD.theta0, 'C_pitching_amplitude'], [FD.velocity_inf, 'C_velocity_inf']])
 UDF_file = open(os.path.dirname(os.path.abspath(__file__)) + "\\Rigid_TemPlate.c", "r").readlines()
 for param in parameter_search:
     UDF_file = [w.replace(param[1], param[0]).strip() for w in UDF_file]
