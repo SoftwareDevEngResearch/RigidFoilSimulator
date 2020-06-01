@@ -2,9 +2,11 @@ import os, sys
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 MainCodePath = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) 
 sys.path.append(MainCodePath + r"\\FoilParameters")
 import FoilParameters as fP
+
 
 def convert_2_txt(file_path):
     """Identifies if file needs to be converted to txt"""
@@ -15,8 +17,7 @@ def convert_2_txt(file_path):
     return file_path 
     
 def add_data_columns(file_path, chord, theta, h):
-    """Check to see if new columns of rotated data have been added and add if needed"""
-    
+    """Check to see if new columns of rotated data have been added and add if needed"""    
     file_object = open(file_path,"r")
     headers = file_object.readline()
     variable_names = np.array(headers.replace(",", " ").strip().split())
@@ -81,6 +82,7 @@ def process_wallshear_data(folder_path, foilProfile):
         file_path = convert_2_txt(folder_path+"\\"+file_names[x])
         time_step = int(file_names[x].split('-')[-1].split('.')[0])
         theta = foilProfile.theta[time_step]
+
         #print('\n FileName = %s \n Time Step [ct] = % s, Theta [deg] = % s' % (file_names[x], time_step, np.degrees(theta)))
 
         if round(theta,3) != 0 and time_step > 00:
@@ -102,7 +104,7 @@ def process_wallshear_data(folder_path, foilProfile):
                 ct = ct + 1
                 if ct == 6:
                     break
-                    
+
     print("Vortex is shed at time step = %s \nVortex Position = %s" % (shed_time,x_wallshear))
     desired_steps = np.unique(temp_database[:,-1]).astype(int)[-11:]
     temp_set = np.empty([0,3])
@@ -113,8 +115,8 @@ def process_wallshear_data(folder_path, foilProfile):
     print(temp_set)
     plt.grid()
     plt.show()
-
             
+            ## conda install scipy and sympy
 if __name__ == "__main__":
     """testing script functionality"""
     folder_path = MainCodePath +"\\Tests\\WallShearData"
