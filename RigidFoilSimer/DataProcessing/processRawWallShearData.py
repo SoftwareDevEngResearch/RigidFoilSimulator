@@ -117,8 +117,9 @@ def process_wallshear_data(folder_path, foilProfile):
             
 if __name__ == "__main__":
     """testing script functionality"""
-    # folder_path = MainCodePath +"\\Tests\\WallShearData"
-    folder_path = r"C:\Users\ngov\ASMEConfData\Geo2_NACA0015\Geo2_NACA0015_Mesh1" + "_files\dp0\FFF\Fluent"
+    folder_path = MainCodePath +"\\Tests\\WallShearData"
+    # folder_path = r"C:\Users\ngov\ASMEConfData\Geo2_NACA0015\Geo2_NACA0015_Mesh1" + "_files\dp0\FFF\Fluent"
+    print(folder_path)
     foilProfile = fP.FoilDynamics(0.08, 1.6,0.15/2,70,0.15,1000)
     process_wallshear_data(folder_path, foilProfile)
 
