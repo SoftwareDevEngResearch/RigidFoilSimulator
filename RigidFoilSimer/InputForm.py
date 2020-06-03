@@ -3,6 +3,7 @@
 ## Enter directory folder name to save Simulation Files
 sim_path = r"C:\Users\ngov\Desktop"
 folder_name = r"RigidFoilSimulation"
+project_name = r"k0p08"
 
 
 ## Enter foil geometry details in units of [M]
@@ -10,8 +11,8 @@ folder_name = r"RigidFoilSimulation"
 chord_length = 0.15            
 leading_edge_height = chord_length*0.15/2
 leading_edge_width = leading_edge_height*4
-trailing_edge_height = 0.001
-trailing_edge_width = trailing_edge_height*6
+trailing_edge_height = 0.0005
+trailing_edge_width = trailing_edge_height
 
 
 ## Enter dynamic parameter details

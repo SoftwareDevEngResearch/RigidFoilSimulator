@@ -1,4 +1,0 @@
-# encoding: utf-8
-# 2019 R2
-SetScriptVersion(Version="19.4.159")
-Save(Overwrite=True)

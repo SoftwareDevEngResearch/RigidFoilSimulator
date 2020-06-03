@@ -1,0 +1,10 @@
+# encoding: utf-8
+# 2019 R2
+SetScriptVersion(Version="19.4.159")
+parameter1 = Parameters.GetParameter(Name="P1")
+parameter1.SetQuantityUnit(Unit="m")
+parameter2 = Parameters.GetParameter(Name="P3")
+parameter2.SetQuantityUnit(Unit="m")
+parameter3 = Parameters.GetParameter(Name="P7")
+parameter3.SetQuantityUnit(Unit="m")
+Save(Overwrite=True)

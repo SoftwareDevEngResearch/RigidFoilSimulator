@@ -85,7 +85,7 @@ def process_wallshear_data(folder_path, foilProfile):
 
         #print('\n FileName = %s \n Time Step [ct] = % s, Theta [deg] = % s' % (file_names[x], time_step, np.degrees(theta)))
 
-        if round(theta,3) != 0 and time_step > 00:
+        if round(theta,3) != 0 and time_step > 3150:
             processed_data = add_data_columns(file_path, foilProfile.chord, foilProfile.theta[time_step], foilProfile.h[time_step])[1:,:].astype(float)
             processed_data2 = np.append(processed_data, np.full((processed_data.shape[0],1), time_step).astype(int) , axis=1)
             temp_database = np.append(temp_database, processed_data2, axis=0)
@@ -113,14 +113,15 @@ def process_wallshear_data(folder_path, foilProfile):
         temp_ws = np.min(temp_database[temp_database[:, -1] == step,1])
         temp_set = np.append(temp_set, [[step, temp_x, temp_ws]], axis=0)
     print(temp_set)
+    plt.legend()
     plt.grid()
     plt.show()
             
             ## conda install scipy and sympy
 if __name__ == "__main__":
     """testing script functionality"""
-    folder_path = MainCodePath +"\\Tests\\WallShearData"
-    # folder_path = r"C:\Users\ngov\ASMEConfData\Geo2_NACA0015\Geo2_NACA0015_Mesh1" + "_files\dp0\FFF\Fluent"
+    #folder_path = MainCodePath +"\\Tests\\WallShearData"
+    folder_path = r"C:\Users\ngov\ASMEConfData\Geo2_NACA0015\Geo2_NACA0015_k0p16_2" + "_files\dp0\FFF\Fluent"
     print(folder_path)
     foilProfile = fP.FoilDynamics(0.08, 1.6,0.15/2,70,0.15,1000)
     process_wallshear_data(folder_path, foilProfile)
