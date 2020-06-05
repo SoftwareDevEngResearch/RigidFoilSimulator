@@ -85,16 +85,12 @@ def process_wallshear_data(folder_path, foilProfile):
 
         #print('\n FileName = %s \n Time Step [ct] = % s, Theta [deg] = % s' % (file_names[x], time_step, np.degrees(theta)))
 
-        if round(theta,3) != 0 and time_step > 3150:
+        if round(theta,3) != 0 and time_step > 2000:
             processed_data = add_data_columns(file_path, foilProfile.chord, foilProfile.theta[time_step], foilProfile.h[time_step])[1:,:].astype(float)
             processed_data2 = np.append(processed_data, np.full((processed_data.shape[0],1), time_step).astype(int) , axis=1)
             temp_database = np.append(temp_database, processed_data2, axis=0)
             x = processed_data[1:,-2].astype(float)/foilProfile.chord
             wallshear = processed_data[1:,-1].astype(float)
-            plt.plot(x,wallshear, label = time_step)
-            plt.xlabel('Position along the Chord, x/C')
-            plt.ylabel('Wallshear')
-
             if np.min(wallshear) < 0 and wallshear[0] > 0:
                 if ct == 0: 
                     shed_time = time_step
@@ -102,26 +98,37 @@ def process_wallshear_data(folder_path, foilProfile):
                     shed_wallshear = wallshear
                     x_wallshear = shed_x[np.argmin(wallshear)]
                 ct = ct + 1
-                if ct == 6:
+                if ct == 4:
                     break
-
+    fig, axs = plt.subplots(3)
     print("Vortex is shed at time step = %s \nVortex Position = %s" % (shed_time,x_wallshear))
-    desired_steps = np.unique(temp_database[:,-1]).astype(int)[-11:]
+    desired_steps = np.unique(temp_database[:,-1]).astype(int)[-9:]
     temp_set = np.empty([0,3])
+    filtered_data = np.empty([0,3])
     for step in desired_steps:
+        filtered_data = temp_database[temp_database[:,-1]==step,:]
+        axs[0].plot(filtered_data[:,0]/foilProfile.chord,filtered_data[:,1], label = step)
         temp_x = temp_database[temp_database[:, -1] == step,:][np.argmin(temp_database[temp_database[:, -1] == step,1]),0]
         temp_ws = np.min(temp_database[temp_database[:, -1] == step,1])
         temp_set = np.append(temp_set, [[step, temp_x, temp_ws]], axis=0)
     print(temp_set)
-    plt.legend()
-    plt.grid()
+    axs[1].plot(temp_set[:,0], temp_set[:,2])
+    axs[2].plot(temp_set[:,0], temp_set[:,1]/foilProfile.chord)
+    axs[0].legend()
+    axs[0].grid()
+    axs[1].grid()
+    axs[2].grid()
+    fig.suptitle('k=0.10')
+    axs[0].set(xlabel='x position along the chord, [x/C]', ylabel='Wall Shear')
+    axs[1].set(xlabel='time step [s]', ylabel='Wall Shear')
+    axs[2].set(xlabel='time step [s]', ylabel='x position along the chord, [x/C]')
     plt.show()
             
             ## conda install scipy and sympy
 if __name__ == "__main__":
     """testing script functionality"""
     #folder_path = MainCodePath +"\\Tests\\WallShearData"
-    folder_path = r"C:\Users\ngov\ASMEConfData\Geo2_NACA0015\Geo2_NACA0015_k0p16_2" + "_files\dp0\FFF\Fluent"
+    folder_path = r"C:\Users\ngov\ASMEConfData\Geo2_NACA0015\Geo2_NACA0015_2_k0p12" + "_files\dp0\FFF\Fluent"
     print(folder_path)
     foilProfile = fP.FoilDynamics(0.08, 1.6,0.15/2,70,0.15,1000)
     process_wallshear_data(folder_path, foilProfile)
