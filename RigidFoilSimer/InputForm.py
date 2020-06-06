@@ -1,7 +1,7 @@
 ##RIGID-FOIL-SIMULATION-GENERATOR-DATA-FORM
 
 ## Enter directory folder name to save Simulation Files
-sim_path = r"C:\Users\ngov\Desktop"
+sim_path = r"C:\Users\vicki\Desktop"
 folder_name = r"RigidFoilSimulation"
 project_name = r"k0p08"
 

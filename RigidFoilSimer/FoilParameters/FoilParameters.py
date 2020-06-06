@@ -135,7 +135,7 @@ def path_check(path, prompt):
                     else:
                         break
                 else:    
-                    sys.exit("Directory for the simulation files could not be created/processed")
+                    sys.exit("Directory for the simulation files could not be created/processed. Please check your directory inputs in the input form")
             else:
                 print ("Successfully created the directory %s " % path)
             break
