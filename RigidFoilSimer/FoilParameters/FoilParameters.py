@@ -72,6 +72,7 @@ class FoilDynamics(object):
         self.velocity_inf = f*chord/k
         self.h0 = h0
         samp = int(np.ceil(self.T/self.dt) + 1)     #total number of time steps 
+        self.total_steps = samp-1
         self.time = [0]*samp
         self.h = [0]*samp
         self.theta = [0]*samp
@@ -130,34 +131,20 @@ def path_check(path, prompt):
                 #print ("Creation of the directory %s failed" % path)
                 if os.path.exists(path):
                     if query_yes_no("Folder already exists, is it okay to replace existing files?")==False:
-                        path = input("Enter the full path of the folder you would like the *.c file to be saved w/o quotations: ")
+                        path = input("Enter the full path of the folder you would like the file to be saved w/o quotations: ")
                         path_check(path)
                     else:
                         break
                 else:    
                     sys.exit("Directory for the simulation files could not be created/processed. Please check your directory inputs in the input form")
             else:
-                print ("Successfully created the directory %s " % path)
+                print ("Successfully created the directory, %s " % path)
             break
         elif data.lower()=='b':
-            path = input("Enter the full path of the folder you would like the *.c file to be saved w/o quotations: ")
+            path = input("Enter the full path of the folder you would like the file to be saved w/o quotations: ")
             break
         elif data.lower()=='c':
-            sys.exit("User defined function needs to be generated and stored somewhere to proceed")
+            sys.exit("Directory needs to be defined in order to proceed")
     return path
             
-            
-if __name__ == "__main__":
-    """testing script functionality"""
-
-    check = FoilGeo()
-    print(check)
-    
-    k = FoilDynamics(1.6,check.chord/2,70,check.chord,1000,4)
-    plt.plot(k.time, k.h, label = "heaving velocity")
-    #plt.plot(k.time, k.theta, label = "pitching velocity")
-    plt.xlabel('time [s]')
-    plt.legend()
-    # plt.show()
-    
 

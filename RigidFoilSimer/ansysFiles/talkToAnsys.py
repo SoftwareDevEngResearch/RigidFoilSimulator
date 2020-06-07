@@ -9,84 +9,69 @@ import InputForm as inp
 import FoilParameters as fP
 
 def getTasks(name):
-    r = os.popen('tasklist /v').read().strip().split('\n')
-    for i in range(len(r)):
-        if name in r[i]:
-            print('Program is running...')
-            return r[i]
-    return []
+    timer = 0
+    ramp = 0
+    tasks = []
+    while tasks or ramp < 2:
+        tasks = []
+        r = os.popen('tasklist /v').read().strip().split('\n')
+        for i in range(len(r)):
+            if name in r[i]:
+                tasks = r[i]
+        if 'Not Responding' in tasks:
+            sys.exit('Not Responding, ANSYS and Python operation will be exited')
+        if tasks==[] and ramp==timer:
+            ramp += 1
+            print('Waiting for response')
+        elif ramp==timer:
+            print('%s is running...' % name)
+        elif ramp!=timer:
+            ramp = 10
+        timer += 1
 
-def generateMesh_wbjn(folder_path, wbjnMesh_path):
-    project_path = folder_path + "\\" + inp.project_name + ".wbpj"
+def write2file(inputList, outputFile):
+    with open(outputFile, "w") as new_wbjn_file:
+        for lineitem in inputList:
+            new_wbjn_file.write('%s' % lineitem)
+   
+   
+def run_wbjn(WB_path, wbjn_path, method):
+    subprocess.Popen([WB_path, '-R', wbjn_path, method])
+    
+    getTasks('AnsysFW.exe')
+    print('Operation complete.')
+  
+
+def generateMesh_wbjn(project_path, wbjnMesh_path):
 
     MeshGen_file = open(os.path.dirname(os.path.abspath(__file__)) + "\\WB_genFileGeomMesh.wbjn", "r").readlines()
 
-    file_search = np.array([[os.path.dirname(os.path.abspath(__file__)) + '\\WorkbenchProjectTemplate.wbpj','InputFile'],[project_path,'SaveFile']])
+    file_search = np.array([[os.path.dirname(os.path.abspath(__file__)) + '\\WorkbenchProjectTemplate.wbpj','InputFile'],[project_path + ".wbpj",'SaveFile']])
     for param in file_search:
         param = [w.replace("\\","/") for w in param]
         MeshGen_file = [w.replace(param[1], param[0]) for w in MeshGen_file]
 
     parameter_search = np.array([inp.chord_length, inp.leading_edge_width/inp.leading_edge_height, inp.trailing_edge_height, inp.trailing_edge_width/inp.trailing_edge_height, inp.leading_edge_height])
-    print(parameter_search.shape)
-    Expressions = np.array(range(5)).astype(str)
-    print(Expressions.shape)
-    New = np.append(parameter_search, Expressions, axis=1)
-    print(New)
-    
     p = 0
-    count = -1
-    for line in MeshGen_file:
-        count += 1
-        if p == 1:
-            MeshGen_file[count] = MeshGen_file[count].replace('Expression="', 'Expression="' + str(parameter_search[int(param)-1]))
-            p = 0
-        if line.find("Parameter=parameter") > 0:
-            p = 1
-            param = line[-3]
-    print(MeshGen_file)
-    
-    # with open(wbjnMesh_path, "w") as new_wbjn_file:
-        # for lineitem in MeshGen_file:
-            # new_wbjn_file.write('%s' % lineitem)
-
-def generateMesh_msh(WB_path, wbjnMesh_path):
-    subprocess.Popen([WB_path, '-R', wbjnMesh_path, '-B'])
-
-    imgName = 'AnsysFW.exe'
-    timer = 0
-    ramp = 0
-    r = getTasks(imgName)
-    while r or ramp < 2:
-        if 'Not Responding' in r or timer > 10000000:
-            sys.exit('Not Responding, ANSYS and Python operation will be exited')
-        if False and ramp==timer:
-            ramp += 1
-            print('Waiting for response')
-        elif ramp!=timer:
-            ramp = 10
-        timer += 1
-        r = getTasks(imgName)
+    for line in range(len(MeshGen_file)):
+        if '_Ex_' in MeshGen_file[line]:
+            MeshGen_file[line] = MeshGen_file[line].replace('_Ex_', str(parameter_search[p]))
+            p += 1
+            
+    write2file(MeshGen_file, wbjnMesh_path)
+    print('Mesh Journal has been generated.')
         
+        
+def generateFluent_wbjn(folder_path, project_path, wbjnFluent_path, FoilDyn):
     
-folder_path = inp.sim_path + "\\" + inp.folder_name
-fluent_path = shutil.which("fluent")
-WB_path = fluent_path[0:int(fluent_path.find("fluent"))] + r"Framework\bin\Win64\RunWB2.exe"
-wbjnMesh_path = folder_path + "\\" + inp.project_name + "_genFileGeomMesh.wbjn"
-
-generateMesh_wbjn(folder_path, wbjnMesh_path)
-# generateMesh_msh(WB_path, wbjnMesh_path)
-
-# if fP.FoilParameters.query_yes_no("Project with Mesh file has been generated. Begin simulation?")==False:
-    # sys.exit("Done.")
-
-# wbjnFluent_path = folder_path + "\\" + "WB_genFluent.wbjn"
-# subprocess.Popen([WB_path, '-R', wbjnFluent_path, '-I'])
-
-
-
-# worDir = os.getcwd()
-
-
-# # allCmds = "{}; {}".format(cmd1 cmd2)
-# # allCmds = "{}; {}".format(cmd1, cmd2) 
-# # https://stackoverflow.com/questions/9649355/python-how-to-run-multiple-commands-in-one-process-using-popen
+    FluentGen_file = open(os.path.dirname(os.path.abspath(__file__)) + "\\WB_genFluent.wbjn", "r").readlines()
+    print(os.path.dirname(os.path.abspath(__file__)) + "\\WB_genFluent.wbjn")
+    
+    file_item = np.array(['InputFile', '_xVelocity_','UDF_C_File','_chordLength_', '_wallShearFileName_', '_stepSize_', '_totalSteps_'])
+    file_replace = np.array([(project_path + '.wbpj').replace("\\","/"), FoilDyn.velocity_inf, (folder_path + "\\modRigidPlateFile.c").replace("\\","/"), FoilDyn.chord, str(FoilDyn.reduced_frequency).replace(".","") + '-wallshear', FoilDyn.dt, FoilDyn.total_steps])
+   
+    for param in range(len(file_item)):
+        FluentGen_file = [w.replace(file_item[param], file_replace[param]) for w in FluentGen_file]
+    
+    write2file(FluentGen_file, wbjnFluent_path)
+    print('Fluent Simulation Journal has been generated.')
