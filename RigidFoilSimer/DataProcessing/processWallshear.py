@@ -85,7 +85,7 @@ def process_wallshear_data(folder_path, foilProfile):
 
         #print('\n FileName = %s \n Time Step [ct] = % s, Theta [deg] = % s' % (file_names[x], time_step, np.degrees(theta)))
 
-        if round(theta,3) != 0 and time_step > 2000:
+        if round(theta,3) != 0 and time_step > 0:
             processed_data = add_data_columns(file_path, foilProfile.chord, foilProfile.theta[time_step], foilProfile.h[time_step])[1:,:].astype(float)
             processed_data2 = np.append(processed_data, np.full((processed_data.shape[0],1), time_step).astype(int) , axis=1)
             temp_database = np.append(temp_database, processed_data2, axis=0)
