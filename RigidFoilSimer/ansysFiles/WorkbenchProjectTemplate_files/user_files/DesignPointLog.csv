@@ -1,0 +1,12 @@
+﻿# 
+# This file contains the parameter values of the Design Points successfully updated by ANSYS Workbench.
+# Project name: WorkbenchProjectTemplate
+# Creation date: 05/31/2020 22:42:26
+# 
+# 05/31/2020 22:42:26
+# The parameters defined in the project are:
+# ,P1 - chord [cm],P2 - LEAR,P3 - TEy [cm],P4 - TEAR,P5 - WTWidth [cm],P6 - WTHeight [cm],P7 - LEy [cm]
+# 
+# The following header line defines the name of the columns by reference to the parameters.
+Name,P1,P2,P3,P4,P5,P6,P7
+DP 0,15,4,0.001,6,900,900,1.125

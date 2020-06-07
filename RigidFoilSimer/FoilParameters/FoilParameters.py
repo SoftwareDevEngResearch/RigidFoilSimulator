@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import fsolve
 from sympy import symbols, Eq, solve
+import sys, os
 
 
 pi = np.pi
@@ -82,6 +83,68 @@ class FoilDynamics(object):
             ## These are the heaving and pitching rates
             #self.h_dot[x] = 2*pi*f*self.h0*cos(2*pi*f*ti+pi/2)
             #self.theta_dot[x] = 2*pi*f*self.theta0*cos(2*pi*f*ti)
+
+
+def query_yes_no(question, default=None):
+    """Ask a yes/no question via input() and return their answer.
+
+    "question" is a string that is presented to the user.
+    "default" is the presumed answer if the user just hits <Enter>.
+        It must be "yes" (the default), "no" or None (meaning
+        an answer is required of the user).
+
+    The "answer" return value is True for "yes" or False for "no".
+    """
+    valid = {"yes": True, "y": True, "ye": True,
+             "no": False, "n": False}
+    if default is None:
+        prompt = " [y/n] "
+    elif default == "yes":
+        prompt = " [Y/n] "
+    elif default == "no":
+        prompt = " [y/N] "
+    else:
+        raise ValueError("invalid default answer: '%s'" % default)
+
+    while True:
+        sys.stdout.write(question + prompt)
+        choice = input().lower()
+        if default is not None and choice == '':
+            return valid[default]
+        elif choice in valid:
+            return valid[choice]
+        else:
+            sys.stdout.write("Please respond with 'yes' or 'no' "
+                             "(or 'y' or 'n').\n")
+
+def path_check(path, prompt):
+    """figure out whether file exists and if so, how to handle it"""
+    while True:
+        data = input(prompt)
+        if data.lower() not in ('a', 'b', 'c'):
+            print("Not an appropriate choice.")
+        elif data.lower()=='a':
+            try:
+                os.mkdir(path)
+            except OSError:
+                #print ("Creation of the directory %s failed" % path)
+                if os.path.exists(path):
+                    if query_yes_no("Folder already exists, is it okay to replace existing files?")==False:
+                        path = input("Enter the full path of the folder you would like the *.c file to be saved w/o quotations: ")
+                        path_check(path)
+                    else:
+                        break
+                else:    
+                    sys.exit("Directory for the simulation files could not be created/processed. Please check your directory inputs in the input form")
+            else:
+                print ("Successfully created the directory %s " % path)
+            break
+        elif data.lower()=='b':
+            path = input("Enter the full path of the folder you would like the *.c file to be saved w/o quotations: ")
+            break
+        elif data.lower()=='c':
+            sys.exit("User defined function needs to be generated and stored somewhere to proceed")
+    return path
             
             
 if __name__ == "__main__":
