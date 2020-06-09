@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 
 MainCodePath = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) 
 sys.path.append(MainCodePath + r"\\FoilParameters")
-import Parameters as fP
 
 
 def convert_2_txt(file_path):

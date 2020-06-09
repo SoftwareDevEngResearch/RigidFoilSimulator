@@ -5,7 +5,6 @@ import numpy as np
 
 MainCodePath = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) 
 sys.path.append(MainCodePath)
-import Parameters as fP
 
 def getTasks(name):
     timer = 0
@@ -44,9 +43,9 @@ def run_wbjn(WB_path, wbjn_path, method):
 
 def generateMesh_wbjn(FilePath, wbjnMesh_path, FoilGeo):
 
-    MeshGen_file = open(os.path.dirname(os.path.abspath(__file__)) + "\\WB_genFileGeomMesh.wbjn", "r").readlines()
+    MeshGen_file = open(os.path.dirname(os.path.abspath(__file__)) + "\\AnsysFiles\\WB_genFileGeomMesh.wbjn", "r").readlines()
 
-    file_search = np.array([[os.path.dirname(os.path.abspath(__file__)) + '\\WorkbenchProjectTemplate.wbpj','InputFile'],[FilePath.project_path + ".wbpj",'SaveFile']])
+    file_search = np.array([[os.path.dirname(os.path.abspath(__file__)) + '\\AnsysFiles\\WorkbenchProjectTemplate.wbpj','InputFile'],[FilePath.project_path + ".wbpj",'SaveFile']])
     for param in file_search:
         param = [w.replace("\\","/") for w in param]
         MeshGen_file = [w.replace(param[1], param[0]) for w in MeshGen_file]
@@ -64,8 +63,8 @@ def generateMesh_wbjn(FilePath, wbjnMesh_path, FoilGeo):
         
 def generateFluent_wbjn(FilePath, project_path, wbjnFluent_path, FoilDyn):
     
-    FluentGen_file = open(os.path.dirname(os.path.abspath(__file__)) + "\\WB_genFluent.wbjn", "r").readlines()
-    print(os.path.dirname(os.path.abspath(__file__)) + "\\WB_genFluent.wbjn")
+    FluentGen_file = open(os.path.dirname(os.path.abspath(__file__)) + "\\AnsysFiles\\WB_genFluent.wbjn", "r").readlines()
+    print(os.path.dirname(os.path.abspath(__file__)) + "\\AnsysFiles\\WB_genFluent.wbjn")
     
     file_item = np.array(['InputFile', '_xVelocity_','UDF_C_File','_chordLength_', '_wallShearFileName_', '_stepSize_', '_totalSteps_'])
     file_replace = np.array([(project_path + '.wbpj').replace("\\","/"), FoilDyn.velocity_inf, (FilePath.folder_path + "\\modRigidPlateFile.c").replace("\\","/"), FoilDyn.chord, str(FoilDyn.reduced_frequency).replace(".","") + '-wallshear', FoilDyn.dt, FoilDyn.total_steps])
