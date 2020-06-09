@@ -1,4 +1,4 @@
-import RigidFoilSimer.Parameters.Parameters as fP
+import Parameters.Parameters as fP
 import sys
 import os
 import numpy as np

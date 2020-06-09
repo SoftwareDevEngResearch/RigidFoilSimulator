@@ -1,4 +1,4 @@
-import RigidFoilSimer.Parameters as FP
+import Parameters as FP
 import AnsysFiles.talkToAnsys as TA
 import DataProcessing as DP
 import sys
@@ -19,9 +19,9 @@ def main(FilePath, FoilGeo, FoilDyn):
     yesNo("Generate project file and mesh file?")
     TA.run_wbjn(FilePath.WB_path, FilePath.wbjnMesh_path, '-B')
 
-    # ## Generate Fluent Files
-    # yesNo("Project with Mesh file has been generated. Begin simulation? (This will take a long time)")
-    # TA.generateFluent_wbjn(folder_path, project_path, wbjnFluent_path, FoilDyn)
+    ## Generate Fluent Files
+    yesNo("Project with Mesh file has been generated. Begin simulation? (This will take a long time)")
+    TA.generateFluent_wbjn(folder_path, project_path, wbjnFluent_path, FoilDyn)
     # TA.run_wbjn(WB_path, wbjnFluent_path, '-B')
 
     # ## Process Wall shear data
@@ -29,7 +29,8 @@ def main(FilePath, FoilGeo, FoilDyn):
     
 if __name__ == "__main__":
     ## Reading in input form
-    FoilGeo = FP.FoilParameters.FoilGeo()
-    FoilDyn = FP.FoilParameters.FoilDyn()
+    FilePaths = FP.Parameters.FilePath("C:/Users/vicki/Desktop","githubVersion")
+    FoilGeo = FP.Parameters.Geometry()
+    FoilDyn = FP.Parameters.Dynamics()
 
-    main(FilePaths, FoilFeo, FoilDyn)
+    main(FilePaths, FoilGeo, FoilDyn)
