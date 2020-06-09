@@ -3,14 +3,42 @@ import matplotlib.pyplot as plt
 from scipy.optimize import fsolve
 from sympy import symbols, Eq, solve
 import sys, os
+import shutil
 
 
 pi = np.pi
 cos = np.cos
 
-class FoilGeo(object):
+class FilePath(object):
+    """Establishes paths that are referenced throughout the package"""
+    def __init__(self, folder_parentpath, folder_name="RigidFoilSimer_Example", project_name="NACA0018_Example"):
+        self.folder_path = (folder_parentpath + "\\" + folder_name).replace("/","\\")
+        self.folder_name = folder_name
+        self.project_path = (self.folder_path + "\\" + project_name).replace("/","\\")
+        self.project_name = project_name
+        self.wbjnMesh_path = self.project_path + "_genFileGeomMesh.wbjn"
+        self.wbjnFluent_path = self.project_path + "_genFileFluent.wbjn"
+        self.FFF_path =  self.project_path + "_files\dp0\FFF\Fluent"
+
+        fluent_path = shutil.which("fluent")
+        self.WB_path = fluent_path[0:int(fluent_path.find("fluent"))] + r"Framework\bin\Win64\RunWB2.exe"
+    
+    def newFolderPath(self, folder_path):
+        self.folder_path = folder_path.replace("/","\\")
+        self.project_path = (self.folder_path + "\\" + self.project_name).replace("/","\\")
+        self.wbjnMesh_path = (self.project_path + "_genFileGeomMesh.wbjn").replace("\\","/")
+        self.wbjnFluent_path = self.project_path + "_genFileFluent.wbjn"
+        self.FFF_path =  self.project_path + "_files\dp0\FFF\Fluent"
+        
+    def __repr__(self):
+        return "File Paths: \n \
+        Folder path : \t\t % s \n \
+        Project name : \t % s \n \
+        Workbench path : \t % s \t\t\n \
+        " % (self.folder_path, self.project_path, self.WB_path)
+
+class Geometry(object):
     """Foil geometry conditions are used to explore different sizes and shapes"""
-    #class body definition
     
     def __init__(self, chord=0.15, leading_ellipse_y = 0.0065/2, leading_ellipse_x = 0.0065*3, trailing_ellipse_y = 0.0065/2, trailing_ellipse_x=0.0065*3):
         """Initializes the main parameters for DesignModeler, default parameters are for the flat rigid plate geometry"""
@@ -56,22 +84,23 @@ class FoilGeo(object):
         " % (self.chord, self.leading_ellipse_y, self.leading_ellipse_x, self.trailing_ellipse_y, self.trailing_ellipse_x)
 
       
-class FoilDynamics(object):
+class Dynamics(object):
     """Foil parameters are all parameters involved in the motion generation"""
     # class body definition
     
-    def __init__(self, k, f, h0, theta0, chord, steps_per_cycle, total_cycles=4, density=1.225):
+    def __init__(self, k=0.08, f=1.6, h0=0.075, theta0=70, chord=0.15, steps_per_cycle=1000, total_cycles=4, density=1.225):
         self.reduced_frequency = k
         self.freq = f                    
         self.theta0 = np.radians(theta0)
         self.steps_per_cycle = steps_per_cycle
         self.dt = 1/(f*steps_per_cycle)
-        self.T = round(total_cycles/f,6)
+        self.total_cycles = total_cycles
+        #self.T = round(total_cycles/f,6)
         self.rho = density                          #fluid density
         self.chord = chord
         self.velocity_inf = f*chord/k
         self.h0 = h0
-        samp = int(np.ceil(self.T/self.dt) + 1)     #total number of time steps 
+        samp = int(np.ceil(round(total_cycles/f,6)/self.dt) + 1)     #total number of time steps 
         self.total_steps = samp-1
         self.time = [0]*samp
         self.h = [0]*samp
@@ -84,6 +113,18 @@ class FoilDynamics(object):
             ## These are the heaving and pitching rates
             #self.h_dot[x] = 2*pi*f*self.h0*cos(2*pi*f*ti+pi/2)
             #self.theta_dot[x] = 2*pi*f*self.theta0*cos(2*pi*f*ti)
+
+    def __repr__(self):
+        return "Foil Dynamic Parameters: \n \
+        reduced frequency [-]: \t % s \n \
+        chord length [M]: \t\t % s \n \
+        heaving frequency [Hz]: \t % s \n \
+        heaving amplitude [M]: \t % s \n \
+        pitching amplitude [rad]: \t % s \n \
+        steps per cycle [N]: \t\t %s \n \
+        total cycles [-]: \t\t %s \n \
+        fluid density [kg/m^3]: \t %s \n \
+        " % (self.reduced_frequency, self.chord, self.freq , self.h0, self.theta0, self.steps_per_cycle, self.total_cycles, self.rho)
 
 
 def query_yes_no(question, default=None):
@@ -121,7 +162,7 @@ def query_yes_no(question, default=None):
 def path_check(path, prompt):
     """figure out whether file exists and if so, how to handle it"""
     while True:
-        data = input(prompt)
+        data = input(prompt % (path))
         if data.lower() not in ('a', 'b', 'c'):
             print("Not an appropriate choice.")
         elif data.lower()=='a':
@@ -130,21 +171,19 @@ def path_check(path, prompt):
             except OSError:
                 #print ("Creation of the directory %s failed" % path)
                 if os.path.exists(path):
-                    if query_yes_no("Folder already exists, is it okay to replace existing files?")==False:
-                        path = input("Enter the full path of the folder you would like the file to be saved w/o quotations: ")
-                        path_check(path)
+                    if query_yes_no("\nFolder already exists, is it okay to replace existing files?")==False:
+                        path = input("\nEnter the full path of the folder you would like the file to be saved w/o quotations: ")
                     else:
                         break
                 else:    
-                    sys.exit("Directory for the simulation files could not be created/processed. Please check your directory inputs in the input form")
+                    sys.exit("\nDirectory for the simulation files could not be created/processed. Please check your directory inputs in the input form")
             else:
-                print ("Successfully created the directory, %s " % path)
+                print ("\nSuccessfully created the directory, %s " % path)
             break
         elif data.lower()=='b':
-            path = input("Enter the full path of the folder you would like the file to be saved w/o quotations: ")
-            break
+            path = input("\nEnter the full path of the folder you would like the file to be saved w/o quotations: ")
         elif data.lower()=='c':
-            sys.exit("Directory needs to be defined in order to proceed")
+            sys.exit("\nDirectory needs to be defined in order to proceed")
     return path
             
 

@@ -5,8 +5,7 @@ import numpy as np
 
 MainCodePath = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) 
 sys.path.append(MainCodePath)
-import InputForm as inp
-import FoilParameters as fP
+import Parameters as fP
 
 def getTasks(name):
     timer = 0
@@ -18,6 +17,7 @@ def getTasks(name):
         for i in range(len(r)):
             if name in r[i]:
                 tasks = r[i]
+                break
         if 'Not Responding' in tasks:
             sys.exit('Not Responding, ANSYS and Python operation will be exited')
         if tasks==[] and ramp==timer:
@@ -42,16 +42,16 @@ def run_wbjn(WB_path, wbjn_path, method):
     print('Operation complete.')
   
 
-def generateMesh_wbjn(project_path, wbjnMesh_path):
+def generateMesh_wbjn(FilePath, wbjnMesh_path, FoilGeo):
 
     MeshGen_file = open(os.path.dirname(os.path.abspath(__file__)) + "\\WB_genFileGeomMesh.wbjn", "r").readlines()
 
-    file_search = np.array([[os.path.dirname(os.path.abspath(__file__)) + '\\WorkbenchProjectTemplate.wbpj','InputFile'],[project_path + ".wbpj",'SaveFile']])
+    file_search = np.array([[os.path.dirname(os.path.abspath(__file__)) + '\\WorkbenchProjectTemplate.wbpj','InputFile'],[FilePath.project_path + ".wbpj",'SaveFile']])
     for param in file_search:
         param = [w.replace("\\","/") for w in param]
         MeshGen_file = [w.replace(param[1], param[0]) for w in MeshGen_file]
 
-    parameter_search = np.array([inp.chord_length, inp.leading_edge_width/inp.leading_edge_height, inp.trailing_edge_height, inp.trailing_edge_width/inp.trailing_edge_height, inp.leading_edge_height])
+    parameter_search = np.array([FoilGeo.chord, FoilGeo.leading_ellipse_x/FoilGeo.leading_ellipse_y, FoilGeo.trailing_ellipse_y, FoilGeo.trailing_ellipse_x/FoilGeo.trailing_ellipse_y, FoilGeo.leading_ellipse_y])
     p = 0
     for line in range(len(MeshGen_file)):
         if '_Ex_' in MeshGen_file[line]:
@@ -59,16 +59,16 @@ def generateMesh_wbjn(project_path, wbjnMesh_path):
             p += 1
             
     write2file(MeshGen_file, wbjnMesh_path)
-    print('Mesh Journal has been generated.')
+    print('Mesh Journal has been generated.\n')
         
         
-def generateFluent_wbjn(folder_path, project_path, wbjnFluent_path, FoilDyn):
+def generateFluent_wbjn(FilePath, project_path, wbjnFluent_path, FoilDyn):
     
     FluentGen_file = open(os.path.dirname(os.path.abspath(__file__)) + "\\WB_genFluent.wbjn", "r").readlines()
     print(os.path.dirname(os.path.abspath(__file__)) + "\\WB_genFluent.wbjn")
     
     file_item = np.array(['InputFile', '_xVelocity_','UDF_C_File','_chordLength_', '_wallShearFileName_', '_stepSize_', '_totalSteps_'])
-    file_replace = np.array([(project_path + '.wbpj').replace("\\","/"), FoilDyn.velocity_inf, (folder_path + "\\modRigidPlateFile.c").replace("\\","/"), FoilDyn.chord, str(FoilDyn.reduced_frequency).replace(".","") + '-wallshear', FoilDyn.dt, FoilDyn.total_steps])
+    file_replace = np.array([(project_path + '.wbpj').replace("\\","/"), FoilDyn.velocity_inf, (FilePath.folder_path + "\\modRigidPlateFile.c").replace("\\","/"), FoilDyn.chord, str(FoilDyn.reduced_frequency).replace(".","") + '-wallshear', FoilDyn.dt, FoilDyn.total_steps])
    
     for param in range(len(file_item)):
         FluentGen_file = [w.replace(file_item[param], file_replace[param]) for w in FluentGen_file]

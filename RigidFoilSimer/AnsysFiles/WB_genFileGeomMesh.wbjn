@@ -2,10 +2,6 @@
 # 2019 R2
 SetScriptVersion(Version="19.4.159")
 Open(FilePath="InputFile")
-Extensions.UnloadExtension(
-    Id="5e7e01a6-8601-11e8-9f8c-28f10e13ffe6",
-    Version="2019.1",
-    Format="Binary")
 Save(
     FilePath="SaveFile",
     Overwrite=True)
