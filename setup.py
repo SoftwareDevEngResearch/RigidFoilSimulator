@@ -23,7 +23,6 @@ setuptools.setup(
     package_dir={'RigidFoilSimer':'RigidFoilSimer'},
     include_package_data=False,
     package_data={'RigidFoilSimer': [
-        'FoilParameters/*.c',
         'AnsysFiles/*',
         'AnsysFiles/WorkbenchProjectTemplate_files/*',
         'AnsysFiles/WorkbenchProjectTemplate_files/dp0/*',

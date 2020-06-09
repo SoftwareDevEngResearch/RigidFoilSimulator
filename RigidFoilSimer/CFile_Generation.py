@@ -1,4 +1,4 @@
-import Parameters.Parameters as fP
+from RigidFoilSimer import Parameters as fP
 import sys
 import os
 import numpy as np
@@ -17,7 +17,7 @@ def genCFile(FilePath, FoilGeo, FoilDyn):
     FilePath.newFolderPath(Folder_Path)
 
     parameter_search = np.array([[FoilGeo.chord, 'C_chord_length'], [FoilDyn.rho, 'C_fluid_density'], [FoilDyn.freq, 'C_heaving_frequency'], [FoilDyn.h0, 'C_heaving_amplitude'], [FoilDyn.theta0, 'C_pitching_amplitude'], [FoilDyn.velocity_inf, 'C_velocity_inf']])
-    UDF_file = open(os.path.dirname(os.path.abspath(__file__)) + "\\Rigid_TemPlate.c", "r").readlines()
+    UDF_file = open(os.path.dirname(os.path.abspath(__file__)) + "\\AnsysFiles\\Rigid_TemPlate.c", "r").readlines()
     for param in parameter_search:
         UDF_file = [w.replace(param[1], param[0]).strip() for w in UDF_file]
 
