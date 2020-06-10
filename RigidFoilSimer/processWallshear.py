@@ -1,5 +1,6 @@
 import os, sys
 import numpy as np
+from . import Parameters
 import matplotlib.pyplot as plt
 
 
@@ -70,6 +71,9 @@ def add_data_columns(file_path, chord, theta, h):
 def wallshearData(folder_path, FoilDyn):
     """Go into wall shear folder and process raw data"""
     
+    if folder_path == os.path.dirname(os.path.realpath(__file__)) + "\Tests\Assets":
+        FoilDyn.total_steps = 2
+    
     file_names = [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
     file_names = list(filter(lambda x:(x.find("les") >= 0 or x.find("wallshear") >0), file_names))
     
@@ -123,6 +127,7 @@ def wallshearData(folder_path, FoilDyn):
     axs[0].set(xlabel='x position along the chord, [x/C]', ylabel='Wall Shear')
     axs[1].set(xlabel='time step [s]', ylabel='Wall Shear')
     axs[2].set(xlabel='time step [s]', ylabel='x position along the chord, [x/C]')
+    
     return fig,axs
   
 if __name__ == "__main__":
