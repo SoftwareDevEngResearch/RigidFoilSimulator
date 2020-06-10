@@ -67,7 +67,7 @@ def add_data_columns(file_path, chord, theta, h):
    
     return np.transpose(np.append([final_data[:,-3]], [final_data[:,-1]], axis=0))
 
-def process_wallshear_data(folder_path, FoilDyn):
+def wallshearData(folder_path, FoilDyn):
     """Go into wall shear folder and process raw data"""
     
     file_names = [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
@@ -112,7 +112,7 @@ def process_wallshear_data(folder_path, FoilDyn):
         temp_x = temp_database[temp_database[:, -1] == step,:][np.argmin(temp_database[temp_database[:, -1] == step,1]),0]
         temp_ws = np.min(temp_database[temp_database[:, -1] == step,1])
         temp_set = np.append(temp_set, [[step, temp_x, temp_ws]], axis=0)
-    print(temp_set)
+    #print(temp_set)
     axs[1].plot(temp_set[:,0], temp_set[:,2])
     axs[2].plot(temp_set[:,0], temp_set[:,1]/FoilDyn.chord)
     axs[0].legend()
@@ -131,6 +131,6 @@ if __name__ == "__main__":
     folder_path = r"C:\Users\ngov\ASMEConfData\Geo2_NACA0015\Geo2_NACA0015_2_k0p12" + "_files\dp0\FFF\Fluent"
     print(folder_path)
     FoilDyn = fP.FoilDynamics(0.08, 1.6,0.15/2,70,0.15,1000)
-    plots = process_wallshear_data(folder_path, FoilDyn)
+    plots = wallshearData(folder_path, FoilDyn)
     plt.show(plots)
 

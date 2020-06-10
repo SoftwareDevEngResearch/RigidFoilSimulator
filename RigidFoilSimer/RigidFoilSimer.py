@@ -1,4 +1,5 @@
 from RigidFoilSimer import Parameters, talkToAnsys, CFile_Generation, processWallshear
+import matplotlib.pyplot as plt
 import sys
 import shutil
 
@@ -23,7 +24,8 @@ def main(FilePath, FoilGeo, FoilDyn):
     # talkToAnsys.run_wbjn(FilePath.WB_path, FilePath.wbjnFluent_path, '-B')
 
     ## Process Wall shear data
-    processWallshear.process_wallshear_data(FilePath.FFF_path, FoilDyn)
+    output = processWallshear.wallshearData(FilePath.data_path, FoilDyn)
+    plt.show()
     
 if __name__ == "__main__":
     ## Reading in input form
