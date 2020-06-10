@@ -121,7 +121,23 @@ class Dynamics(object):
             ## These are the heaving and pitching rates
             #self.h_dot[x] = 2*pi*f*self.h0*cos(2*pi*f*ti+pi/2)
             #self.theta_dot[x] = 2*pi*f*self.theta0*cos(2*pi*f*ti)
-
+    
+    def update_totalCycles(self, total_cycles):
+        self.total_cycles = total_cycles
+        samp = int(np.ceil(round(total_cycles/f,6)/self.dt) + 1)     #total number of time steps 
+        self.total_steps = samp-1
+        self.time = [0]*samp
+        self.h = [0]*samp
+        self.theta = [0]*samp
+        for x in range(samp):
+            ti = round(x*self.dt,5)
+            self.time[x] = ti
+            self.h[x] = self.h0*cos(2*pi*x/steps_per_cycle)-self.h0
+            self.theta[x] = self.theta0*cos(2*pi*x/steps_per_cycle+pi/2)
+            ## These are the heaving and pitching rates
+            #self.h_dot[x] = 2*pi*f*self.h0*cos(2*pi*f*ti+pi/2)
+            #self.theta_dot[x] = 2*pi*f*self.theta0*cos(2*pi*f*ti)
+    
     def __repr__(self):
         return "Foil Dynamic Parameters: \n \
         reduced frequency [-]: \t % s \n \
