@@ -24,6 +24,7 @@ setuptools.setup(
     include_package_data=False,
     package_data={'RigidFoilSimer': [
         'AnsysFiles/*',
+        'Tests/*'
         'Tests/Assets/*',
         'AnsysFiles/WorkbenchProjectTemplate_files/*',
         'AnsysFiles/WorkbenchProjectTemplate_files/dp0/*',

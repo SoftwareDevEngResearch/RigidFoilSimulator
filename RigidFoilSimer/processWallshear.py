@@ -124,7 +124,7 @@ def wallshearData(folder_path, FoilDyn):
     axs[1].set(xlabel='time step [s]', ylabel='Wall Shear')
     axs[2].set(xlabel='time step [s]', ylabel='x position along the chord, [x/C]')
     return fig,axs
-            
+  
 if __name__ == "__main__":
     """testing script functionality"""
     #folder_path = MainCodePath +"\\Tests\\WallShearData"
