@@ -88,7 +88,7 @@ class Dynamics(object):
     """Foil parameters are all parameters involved in the motion generation"""
     # class body definition
     
-    def __init__(self, k=0.08, f=1.6, h0=0.075, theta0=70, chord=0.15, steps_per_cycle=1000, total_cycles=4, density=1.225):
+    def __init__(self, k=0.08, f=1.6, h0=0.075, theta0=70, chord=0.15, steps_per_cycle=1000, total_cycles=0.01, density=1.225):
         self.reduced_frequency = k
         self.freq = f                    
         self.theta0 = np.radians(theta0)
@@ -185,5 +185,18 @@ def path_check(path, prompt):
         elif data.lower()=='c':
             sys.exit("\nDirectory needs to be defined in order to proceed")
     return path
-            
-
+ 
+ 
+def test_Geometry():
+    geo = Parameters.Geometry(0.15,0.15*0.075, 0.15*0.3,0.001,0.006)
+    assert geo.chord == 0.15
+    assert np.allclose(geo.trailing_ellipse_origin, 0.069)
+    
+def test_Dynamics():
+    k = 0.08
+    freq = 1.6
+    chord = 0.15
+    dyn = Parameters.Dynamics(k, freq, 0.075, 70, chord, 1000, 1, 1.225)
+    assert dyn.velocity_inf == freq*chord/k
+    assert np.allclose(dyn.theta[250], -dyn.theta0)
+    assert np.allclose(dyn.theta[1000], 0)
