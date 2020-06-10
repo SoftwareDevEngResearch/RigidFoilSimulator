@@ -1,13 +1,7 @@
-from . import RigidFoilSimer, Parameters
+from RigidFoilSimer import RigidFoilSimer, Parameters
 import numpy as np
 import pytest
 import os
-
-Geo = Parameters.Geometry()
-Dyn = Parameters.Dynamics()
-Files = Parameters.FilePath(os.path.dirname(os.path.abspath(__file__)), "Tests")
-
-#RigidFoilSimer.main(Files, Geo, Dyn)
 
 def test_Geometry():
     geo = Parameters.Geometry(0.15,0.15*0.075, 0.15*0.3,0.001,0.006)
