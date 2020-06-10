@@ -1,4 +1,4 @@
-from RigidFoilSimer import RigidFoilSimer, Parameters
+from . import RigidFoilSimer, Parameters
 import numpy as np
 import pytest
 import os
