@@ -99,6 +99,11 @@ def process_wallshear_data(folder_path, foilProfile):
                 ct = ct + 1
                 if ct == 4:
                     break
+    try:
+        shed_time
+    except NameError:
+        sys.exit("Vortex has not shed within the simulated time line.")
+
     fig, axs = plt.subplots(3)
     print("Vortex is shed at time step = %s \nVortex Position = %s" % (shed_time,x_wallshear))
     desired_steps = np.unique(temp_database[:,-1]).astype(int)[-9:]

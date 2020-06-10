@@ -41,7 +41,7 @@ def run_wbjn(WB_path, wbjn_path, method):
     print('Operation complete.')
   
 
-def generateMesh_wbjn(FilePath, wbjnMesh_path, FoilGeo):
+def generateMesh_wbjn(FilePath, FoilGeo):
 
     MeshGen_file = open(os.path.dirname(os.path.abspath(__file__)) + "\\AnsysFiles\\WB_genFileGeomMesh.wbjn", "r").readlines()
 
@@ -57,20 +57,20 @@ def generateMesh_wbjn(FilePath, wbjnMesh_path, FoilGeo):
             MeshGen_file[line] = MeshGen_file[line].replace('_Ex_', str(parameter_search[p]))
             p += 1
             
-    write2file(MeshGen_file, wbjnMesh_path)
+    write2file(MeshGen_file, FilePath.wbjnMesh_path)
     print('Mesh Journal has been generated.\n')
         
         
-def generateFluent_wbjn(FilePath, project_path, wbjnFluent_path, FoilDyn):
+def generateFluent_wbjn(FilePath, FoilDyn):
     
     FluentGen_file = open(os.path.dirname(os.path.abspath(__file__)) + "\\AnsysFiles\\WB_genFluent.wbjn", "r").readlines()
     print(os.path.dirname(os.path.abspath(__file__)) + "\\AnsysFiles\\WB_genFluent.wbjn")
     
     file_item = np.array(['InputFile', '_xVelocity_','UDF_C_File','_chordLength_', '_wallShearFileName_', '_stepSize_', '_totalSteps_'])
-    file_replace = np.array([(project_path + '.wbpj').replace("\\","/"), FoilDyn.velocity_inf, (FilePath.folder_path + "\\modRigidPlateFile.c").replace("\\","/"), FoilDyn.chord, str(FoilDyn.reduced_frequency).replace(".","") + '-wallshear', FoilDyn.dt, FoilDyn.total_steps])
+    file_replace = np.array([(FilePath.project_path + '.wbpj').replace("\\","/"), FoilDyn.velocity_inf, (FilePath.folder_path + "\\modRigidPlateFile.c").replace("\\","/"), FoilDyn.chord, str(FoilDyn.reduced_frequency).replace(".","") + '-wallshear', FoilDyn.dt, FoilDyn.total_steps])
    
     for param in range(len(file_item)):
         FluentGen_file = [w.replace(file_item[param], file_replace[param]) for w in FluentGen_file]
     
-    write2file(FluentGen_file, wbjnFluent_path)
+    write2file(FluentGen_file, FilePath.wbjnFluent_path)
     print('Fluent Simulation Journal has been generated.')
