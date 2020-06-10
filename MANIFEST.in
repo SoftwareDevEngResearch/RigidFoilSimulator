@@ -1,6 +1,6 @@
 include LICENSE.txt
 include README.md
 include RigidFoilSimer/FoilParameters/ *.c
-recursive-include RigidFoilSimer/Tests/Assets/*.txt
+recursive-include RigidFoilSimer/Tests/Assets/*.txt *.c *.wbjn
 recursive-include RigidFoilSimer/AnsysFiles/*.wbjn *.wbpj
 recursive-include RigidFoilSimer/AnsysFiles/WorkbenchProjectTemplate_files/dp0/*.dat
