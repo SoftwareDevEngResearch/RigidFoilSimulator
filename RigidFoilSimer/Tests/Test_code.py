@@ -1,4 +1,4 @@
-from RigidFoilSimer import RigidFoilSimer, Parameters
+from RigidFoilSimer import RigidFoilSimer, Parameters, processWallshear
 import numpy as np
 import pytest
 import os
