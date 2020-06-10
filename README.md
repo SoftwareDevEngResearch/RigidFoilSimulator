@@ -4,7 +4,7 @@ Python-based oscillating rigid foil simulation package enables novice users to g
 ### Installation
 This package can be installed via:
 
-    pip install rgsim
+    pip install git+https://github.com/vickie-ngo/RigidFoilSimulator#egg=RigidFoilSimer
 
 ### Prerequisites
 The simulation itself is ran through the ANSYS Workbench software package and therefore relies on the successful installation of ANSYS and its dependencies. Some of the dependencies include:
