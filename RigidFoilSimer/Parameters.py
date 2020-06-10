@@ -16,14 +16,14 @@ class FilePath(object):
         self.folder_name = folder_name
         self.project_path = (self.folder_path + "\\" + project_name).replace("/","\\")
         self.project_name = project_name
-        self.wbjnMesh_path = self.project_path + "_genFileGeomMesh.wbjn"
-        self.wbjnFluent_path = self.project_path + "_genFileFluent.wbjn"
-        self.FFF_path =  self.project_path + "_files\dp0\FFF\Fluent"
 
         fluent_path = shutil.which("fluent")
-        if fluent_path == []:
-            print("Fluent application does not exist. Please ensure that ANSYS and its subprograms are installed correctly.")
+        if fluent_path == None:
+            print("Fluent application does not exist. Please ensure that ANSYS and its subprograms are installed correctly to run the simulations.")
         else:
+            self.wbjnMesh_path = self.project_path + "_genFileGeomMesh.wbjn"
+            self.wbjnFluent_path = self.project_path + "_genFileFluent.wbjn"
+            self.FFF_path =  self.project_path + "_files\dp0\FFF\Fluent"
             self.WB_path = fluent_path[0:int(fluent_path.find("fluent"))] + r"Framework\bin\Win64\RunWB2.exe"
     
     def newFolderPath(self, folder_path):
@@ -34,11 +34,13 @@ class FilePath(object):
         self.FFF_path =  self.project_path + "_files\dp0\FFF\Fluent"
         
     def __repr__(self):
-        return "File Paths: \n \
+        output = ("\nFile Paths: \n \
         Folder path : \t\t % s \n \
         Project name : \t % s \n \
-        Workbench path : \t % s \t\t\n \
-        " % (self.folder_path, self.project_path, self.WB_path)
+        " % (self.folder_path, self.project_path))
+        if hasattr(self, 'WB_path'):
+            output = output + "Workbench path : \t % s " % (self.WB_path)
+        return output
 
 class Geometry(object):
     """Foil geometry conditions are used to explore different sizes and shapes"""
@@ -188,18 +190,3 @@ def path_check(path, prompt):
         elif data.lower()=='c':
             sys.exit("\nDirectory needs to be defined in order to proceed")
     return path
- 
- 
-def test_Geometry():
-    geo = Parameters.Geometry(0.15,0.15*0.075, 0.15*0.3,0.001,0.006)
-    assert geo.chord == 0.15
-    assert np.allclose(geo.trailing_ellipse_origin, 0.069)
-    
-def test_Dynamics():
-    k = 0.08
-    freq = 1.6
-    chord = 0.15
-    dyn = Parameters.Dynamics(k, freq, 0.075, 70, chord, 1000, 1, 1.225)
-    assert dyn.velocity_inf == freq*chord/k
-    assert np.allclose(dyn.theta[250], -dyn.theta0)
-    assert np.allclose(dyn.theta[1000], 0)
