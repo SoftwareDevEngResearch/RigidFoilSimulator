@@ -21,7 +21,10 @@ class FilePath(object):
         self.FFF_path =  self.project_path + "_files\dp0\FFF\Fluent"
 
         fluent_path = shutil.which("fluent")
-        self.WB_path = fluent_path[0:int(fluent_path.find("fluent"))] + r"Framework\bin\Win64\RunWB2.exe"
+        if fluent_path == []:
+            print("Fluent application does not exist. Please ensure that ANSYS and its subprograms are installed correctly.")
+        else:
+            self.WB_path = fluent_path[0:int(fluent_path.find("fluent"))] + r"Framework\bin\Win64\RunWB2.exe"
     
     def newFolderPath(self, folder_path):
         self.folder_path = folder_path.replace("/","\\")
@@ -40,7 +43,7 @@ class FilePath(object):
 class Geometry(object):
     """Foil geometry conditions are used to explore different sizes and shapes"""
     
-    def __init__(self, chord=0.15, leading_ellipse_y = 0.0065/2, leading_ellipse_x = 0.0065*3, trailing_ellipse_y = 0.0065/2, trailing_ellipse_x=0.0065*3):
+    def __init__(self, chord=0.15, leading_ellipse_y = 0.15*0.075, leading_ellipse_x = 0.15*0.3, trailing_ellipse_y = 0.001, trailing_ellipse_x=0.006):
         """Initializes the main parameters for DesignModeler, default parameters are for the flat rigid plate geometry"""
         self.leading_ellipse_y = leading_ellipse_y
         self.leading_ellipse_x = leading_ellipse_x
