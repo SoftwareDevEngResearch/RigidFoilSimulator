@@ -20,6 +20,7 @@ setuptools.setup(
     ],
     python_requires='>=3.6',
     zip_safe=False,
+    scripts=['RunRigidFoilSimer.py'],
     package_dir={'RigidFoilSimer':'./RigidFoilSimer'},
     include_package_data=True,
     package_data={'RigidFoilSimer': [
