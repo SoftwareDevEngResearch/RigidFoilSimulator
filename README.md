@@ -27,15 +27,22 @@ To use the rigid foil simulation package, start by defining the 3 class objects 
 
 \* for example, "C:\Users\<username>\Desktop" will save an example folder to the desktop
 
-#### Option #1: Running Code Beginning to End
-Add the main code module to the workspace and add the module statement:
+### Option #1: Running Code Beginning to End
+Import the main code module to the workspace and add the module statement:
 
     from RigidFoilSimer import RigidFoilSimer
     
     RigidFoilSimer.main(filepaths, Geo, Dyn)
 
-**If ANSYS is not installed,** the example case will create an example folder and store all new files into the folder
+**If ANSYS is not installed,** the example case will create an example folder and store all new files into the folder. The example will proceed to run an example case of post-processing on existing data to show what the output would look if the simulation had been completed.
 
-#### Option #2: Create C-File
-Add the CFile_Generation module
+**If ANSYS is installed,** the example case will do the same things as stated previously, but will also run the first 10 time steps of the simulation within ANSYS (note: post-processing of the example does not use data generated from the example simulation, as simulations take over 10hrs of run time to reach the time of interest)
 
+### Option #2: Create C-File
+Import the CFile_Generation module and add the module statement:
+
+    from RigidFoilSimer import CFile_Generation
+    
+    CFile_Generation.genCFile(filepaths, Geo, Dyn)
+
+A \*.c file will be generated in the defined folder.
