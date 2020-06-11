@@ -24,11 +24,3 @@ def main(FilePath, FoilGeo, FoilDyn):
 
     # ## Process Wall shear data
     # processWallshear.processWallshear.process_wallshear_data(FilePath.FFF_path, FoilDyn)
-    
-if __name__ == "__main__":
-    ## Reading in input form
-    FilePaths = Parameters.FilePath("C:/Users/vicki/Desktop","githubVersion")
-    FoilGeo = Parameters.Geometry()
-    FoilDyn = Parameters.Dynamics()
-
-    main(FilePaths, FoilGeo, FoilDyn)
