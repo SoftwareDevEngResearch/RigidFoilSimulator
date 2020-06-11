@@ -14,7 +14,7 @@ The simulation itself is ran through the ANSYS Workbench software package and th
 
 Installing the package also requires Git.  
     
-    4. Git
+  4. Git
   
 ## Warnings and Limitations
 **It is not recommended to run the Rigid Foil Simulator package without prior working knowledge** of how computational fluid dynamics is performed. Output results should be analyzed with discretion before being used to expand and inform on scientific understanding.
