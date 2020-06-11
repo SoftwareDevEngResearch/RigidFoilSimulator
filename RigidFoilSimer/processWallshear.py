@@ -71,7 +71,7 @@ def add_data_columns(file_path, chord, theta, h):
 def wallshearData(folder_path, FoilDyn):
     """Go into wall shear folder and process raw data"""
     
-    if folder_path == os.path.dirname(os.path.realpath(__file__)) + "\Tests\Assets":
+    if folder_path == os.path.dirname(os.path.realpath(__file__)) + r"\Tests\Assets":
         FoilDyn.total_steps = 2
     
     file_names = [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
@@ -133,7 +133,7 @@ def wallshearData(folder_path, FoilDyn):
 if __name__ == "__main__":
     """testing script functionality"""
     #folder_path = MainCodePath +"\\Tests\\WallShearData"
-    folder_path = r"C:\Users\ngov\ASMEConfData\Geo2_NACA0015\Geo2_NACA0015_2_k0p12" + "_files\dp0\FFF\Fluent"
+    folder_path = r"C:\Users\ngov\ASMEConfData\Geo2_NACA0015\Geo2_NACA0015_2_k0p12" + r"_files\dp0\FFF\Fluent"
     print(folder_path)
     FoilDyn = fP.FoilDynamics(0.08, 1.6,0.15/2,70,0.15,1000)
     plots = wallshearData(folder_path, FoilDyn)

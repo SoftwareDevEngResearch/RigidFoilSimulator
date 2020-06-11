@@ -23,4 +23,4 @@ def test_processWallshear():
     freq = 1.6
     chord = 0.15
     dyn = Parameters.Dynamics(k, freq, 0.075, 70, chord, 1000, 2, 1.225)
-    processWallshear.wallshearData(folder_path + "\Assets", dyn)
+    processWallshear.wallshearData(folder_path + r"\Assets", dyn)
