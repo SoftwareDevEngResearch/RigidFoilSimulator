@@ -21,7 +21,7 @@ setuptools.setup(
     python_requires='>=3.6',
     zip_safe=False,
     package_dir={'RigidFoilSimer':'RigidFoilSimer'},
-    include_package_data=False,
+    include_package_data=True,
     package_data={'RigidFoilSimer': [
         'AnsysFiles/*',
         'Tests/*'
