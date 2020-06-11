@@ -29,7 +29,7 @@ To use the rigid foil simulation package, start by defining the 3 class objects 
 
 \*\* If the folder name is left as the default, "RigidFoilSimer_Example", the package WILL treat it as an example so be sure to change the folder name for non-example operations.
 
-### Option #1: Running Code Beginning to End
+### Option #1: Running Code Beginning to End (Recommended)
 Option #1 is a single statement that runs Options #2-#5 all together. Import the main code module to the workspace and add the module statement:
 
     from RigidFoilSimer import RigidFoilSimer
