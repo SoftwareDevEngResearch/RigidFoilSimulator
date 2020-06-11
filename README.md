@@ -11,6 +11,7 @@ The simulation itself is ran through the ANSYS Workbench software package and th
   1. This package was developed using Windows, use with caution when working on other systems
   2. ANSYS 2019 or later
   3. Visual Studio
+
 Installing the package also requires Git.  
   4. Git
   
