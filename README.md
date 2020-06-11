@@ -76,7 +76,7 @@ respectively. Caution must be taken if the Journals are not stored in the same p
 ### Usage #5: Post-Processing Data
 If the data has already been generated, the location of the file can be identified using
 
-    filepaths = Parameters.FilePath(r <path to folder*>, <folder name**> )
+    filepaths = Parameters.FilePath(r <path to folder***>, <folder name****> )
 
 and the following module and statement will determine the points of interest:
 
@@ -86,6 +86,6 @@ and the following module and statement will determine the points of interest:
 
 For running the example case, the output is demonstrated using data that is included with the package.
 
-\* Required, for example, "C:\Users\<username>\Desktop", but for the example case, this directory will not be generated or referenced.
+\*\*\* Required, for example, "C:\Users\<username>\Desktop", but for the example case, this directory will not be generated or referenced.
 
-\*\* If the folder name is left as the default, "RigidFoilSimer_Example", the package WILL treat it as an example so be sure to change the folder name for non-example operations.
+\*\*\*\* If the folder name is left as the default, "RigidFoilSimer_Example", the package WILL treat it as an example so be sure to change the folder name for non-example operations.
