@@ -22,7 +22,7 @@ class FilePath(object):
 
         fluent_path = shutil.which("fluent")
         if fluent_path == None:
-            print("Fluent application does not exist. The rest of this package will operate without interacting with live simulations until ANSYS is installed and file paths are reestablished.")
+            print("IMPORTANT: ANSYS Fluent application could not be found. The rest of this package will operate without interacting with live simulations until ANSYS is installed and file paths are reestablished.")
         else:
             self.WB_path = fluent_path[0:int(fluent_path.find("fluent"))] + r"Framework\bin\Win64\RunWB2.exe"
        
@@ -34,13 +34,15 @@ class FilePath(object):
         self.project_path = (self.folder_path + "\\" + self.project_name).replace("/","\\")
         self.wbjnMesh_path = (self.project_path + "_genFileGeomMesh.wbjn").replace("\\","/")
         self.wbjnFluent_path = self.project_path + "_genFileFluent.wbjn"
-        self.data_path =  self.project_path + r"_files\dp0\FFF\Fluent"
+        if not self.data_path == os.path.dirname(os.path.realpath(__file__)) + r"\Tests\Assets":
+            self.data_path =  self.project_path + r"_files\dp0\FFF\Fluent"
         
     def __repr__(self):
         output = ("\nFile Paths: \n \
         Folder path : \t\t % s \n \
-        Project name : \t % s \n \
-        " % (self.folder_path, self.project_path))
+        Project path : \t % s \n \
+        Data path : \t\t % s \n \
+        " % (self.folder_path, self.project_path, self.data_path))
         if hasattr(self, 'WB_path'):
             output = output + "Workbench path : \t % s " % (self.WB_path)
         return output
@@ -96,7 +98,7 @@ class Dynamics(object):
     """Foil parameters are all parameters involved in the motion generation"""
     # class body definition
     
-    def __init__(self, k=0.08, f=1.6, h0=0.075, theta0=70, chord=0.15, steps_per_cycle=1000, total_cycles=0.01, density=1.225):
+    def __init__(self, k=0.08, f=1.6, h0=0.075, theta0=70, chord=0.15, steps_per_cycle=1000, total_cycles=0.005, density=1.225):
         self.reduced_frequency = k
         self.freq = f                    
         self.theta0 = np.radians(theta0)
@@ -124,7 +126,7 @@ class Dynamics(object):
     
     def update_totalCycles(self, total_cycles):
         self.total_cycles = total_cycles
-        samp = int(np.ceil(round(total_cycles/f,6)/self.dt) + 1)     #total number of time steps 
+        samp = int(np.ceil(round(total_cycles/self.freq,6)/self.dt) + 1)     #total number of time steps 
         self.total_steps = samp-1
         self.time = [0]*samp
         self.h = [0]*samp
@@ -132,8 +134,8 @@ class Dynamics(object):
         for x in range(samp):
             ti = round(x*self.dt,5)
             self.time[x] = ti
-            self.h[x] = self.h0*cos(2*pi*x/steps_per_cycle)-self.h0
-            self.theta[x] = self.theta0*cos(2*pi*x/steps_per_cycle+pi/2)
+            self.h[x] = self.h0*cos(2*pi*x/self.steps_per_cycle)-self.h0
+            self.theta[x] = self.theta0*cos(2*pi*x/self.steps_per_cycle+pi/2)
             ## These are the heaving and pitching rates
             #self.h_dot[x] = 2*pi*f*self.h0*cos(2*pi*f*ti+pi/2)
             #self.theta_dot[x] = 2*pi*f*self.theta0*cos(2*pi*f*ti)
@@ -202,7 +204,7 @@ def path_check(path, prompt):
                 else:    
                     sys.exit("\nDirectory for the simulation files could not be created/processed. Please check your directory inputs in the input form")
             else:
-                print ("\nSuccessfully created the directory, %s " % path)
+                print ("\nSuccessfully accessed the directory, %s " % path)
             break
         elif data.lower()=='b':
             path = input("\nEnter the full path of the folder you would like the file to be saved w/o quotations: ")
