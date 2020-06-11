@@ -23,19 +23,8 @@ def main(FilePath, FoilGeo, FoilDyn):
     # talkToAnsys.generateFluent_wbjn(FilePath, FoilDyn)
     # talkToAnsys.run_wbjn(FilePath.WB_path, FilePath.wbjnFluent_path, '-B')
 
-<<<<<<< HEAD
     # ## Process Wall shear data
     # processWallshear.processWallshear.process_wallshear_data(FilePath.FFF_path, FoilDyn)
-=======
     ## Process Wall shear data
     output = processWallshear.wallshearData(FilePath.data_path, FoilDyn)
     plt.show()
-    
-if __name__ == "__main__":
-    ## Reading in input form
-    FilePaths = Parameters.FilePath("C:/Users/vicki/Desktop","githubVersion")
-    FoilGeo = Parameters.Geometry()
-    FoilDyn = Parameters.Dynamics()
-
-    main(FilePaths, FoilGeo, FoilDyn)
->>>>>>> master
