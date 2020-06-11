@@ -18,7 +18,7 @@ class FilePath(object):
         self.project_name = project_name
         self.wbjnMesh_path = self.project_path + "_genFileGeomMesh.wbjn"
         self.wbjnFluent_path = self.project_path + "_genFileFluent.wbjn"
-        self.data_path = self.project_path + "_files\dp0\FFF\Fluent"
+        self.data_path = self.project_path + r"_files\dp0\FFF\Fluent"
 
         fluent_path = shutil.which("fluent")
         if fluent_path == None:
@@ -27,14 +27,14 @@ class FilePath(object):
             self.WB_path = fluent_path[0:int(fluent_path.find("fluent"))] + r"Framework\bin\Win64\RunWB2.exe"
        
         if self.folder_name == "RigidFoilSimer_Example":
-            self.data_path =  os.path.dirname(os.path.realpath(__file__)) + "\Tests\Assets"
+            self.data_path =  os.path.dirname(os.path.realpath(__file__)) + r"\Tests\Assets"
     
     def newFolderPath(self, folder_path):
         self.folder_path = folder_path.replace("/","\\")
         self.project_path = (self.folder_path + "\\" + self.project_name).replace("/","\\")
         self.wbjnMesh_path = (self.project_path + "_genFileGeomMesh.wbjn").replace("\\","/")
         self.wbjnFluent_path = self.project_path + "_genFileFluent.wbjn"
-        self.data_path =  self.project_path + "_files\dp0\FFF\Fluent"
+        self.data_path =  self.project_path + r"_files\dp0\FFF\Fluent"
         
     def __repr__(self):
         output = ("\nFile Paths: \n \
