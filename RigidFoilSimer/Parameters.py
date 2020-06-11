@@ -11,36 +11,44 @@ cos = np.cos
 
 class FilePath(object):
     """Establishes paths that are referenced throughout the package"""
-    def __init__(self, folder_parentpath, folder_name="RigidFoilSimer_Example", project_name="NACA0018_Example"):
+    def __init__(self, folder_parentpath, folder_name="RigidFoilSimer_Example", project_name="NACA0015_Example"):
         self.folder_path = (folder_parentpath + "\\" + folder_name).replace("/","\\")
         self.folder_name = folder_name
         self.project_path = (self.folder_path + "\\" + project_name).replace("/","\\")
         self.project_name = project_name
         self.wbjnMesh_path = self.project_path + "_genFileGeomMesh.wbjn"
         self.wbjnFluent_path = self.project_path + "_genFileFluent.wbjn"
-        self.FFF_path =  self.project_path + "_files\dp0\FFF\Fluent"
+        self.data_path = self.project_path + r"_files\dp0\FFF\Fluent"
 
         fluent_path = shutil.which("fluent")
-        self.WB_path = fluent_path[0:int(fluent_path.find("fluent"))] + r"Framework\bin\Win64\RunWB2.exe"
+        if fluent_path == None:
+            print("Fluent application does not exist. The rest of this package will operate without interacting with live simulations until ANSYS is installed and file paths are reestablished.")
+        else:
+            self.WB_path = fluent_path[0:int(fluent_path.find("fluent"))] + r"Framework\bin\Win64\RunWB2.exe"
+       
+        if self.folder_name == "RigidFoilSimer_Example":
+            self.data_path =  os.path.dirname(os.path.realpath(__file__)) + r"\Tests\Assets"
     
     def newFolderPath(self, folder_path):
         self.folder_path = folder_path.replace("/","\\")
         self.project_path = (self.folder_path + "\\" + self.project_name).replace("/","\\")
         self.wbjnMesh_path = (self.project_path + "_genFileGeomMesh.wbjn").replace("\\","/")
         self.wbjnFluent_path = self.project_path + "_genFileFluent.wbjn"
-        self.FFF_path =  self.project_path + "_files\dp0\FFF\Fluent"
+        self.data_path =  self.project_path + r"_files\dp0\FFF\Fluent"
         
     def __repr__(self):
-        return "File Paths: \n \
+        output = ("\nFile Paths: \n \
         Folder path : \t\t % s \n \
         Project name : \t % s \n \
-        Workbench path : \t % s \t\t\n \
-        " % (self.folder_path, self.project_path, self.WB_path)
+        " % (self.folder_path, self.project_path))
+        if hasattr(self, 'WB_path'):
+            output = output + "Workbench path : \t % s " % (self.WB_path)
+        return output
 
 class Geometry(object):
     """Foil geometry conditions are used to explore different sizes and shapes"""
     
-    def __init__(self, chord=0.15, leading_ellipse_y = 0.0065/2, leading_ellipse_x = 0.0065*3, trailing_ellipse_y = 0.0065/2, trailing_ellipse_x=0.0065*3):
+    def __init__(self, chord=0.15, leading_ellipse_y = 0.15*0.075, leading_ellipse_x = 0.15*0.3, trailing_ellipse_y = 0.001, trailing_ellipse_x=0.006):
         """Initializes the main parameters for DesignModeler, default parameters are for the flat rigid plate geometry"""
         self.leading_ellipse_y = leading_ellipse_y
         self.leading_ellipse_x = leading_ellipse_x
@@ -88,7 +96,7 @@ class Dynamics(object):
     """Foil parameters are all parameters involved in the motion generation"""
     # class body definition
     
-    def __init__(self, k=0.08, f=1.6, h0=0.075, theta0=70, chord=0.15, steps_per_cycle=1000, total_cycles=4, density=1.225):
+    def __init__(self, k=0.08, f=1.6, h0=0.075, theta0=70, chord=0.15, steps_per_cycle=1000, total_cycles=0.01, density=1.225):
         self.reduced_frequency = k
         self.freq = f                    
         self.theta0 = np.radians(theta0)
@@ -113,7 +121,23 @@ class Dynamics(object):
             ## These are the heaving and pitching rates
             #self.h_dot[x] = 2*pi*f*self.h0*cos(2*pi*f*ti+pi/2)
             #self.theta_dot[x] = 2*pi*f*self.theta0*cos(2*pi*f*ti)
-
+    
+    def update_totalCycles(self, total_cycles):
+        self.total_cycles = total_cycles
+        samp = int(np.ceil(round(total_cycles/f,6)/self.dt) + 1)     #total number of time steps 
+        self.total_steps = samp-1
+        self.time = [0]*samp
+        self.h = [0]*samp
+        self.theta = [0]*samp
+        for x in range(samp):
+            ti = round(x*self.dt,5)
+            self.time[x] = ti
+            self.h[x] = self.h0*cos(2*pi*x/steps_per_cycle)-self.h0
+            self.theta[x] = self.theta0*cos(2*pi*x/steps_per_cycle+pi/2)
+            ## These are the heaving and pitching rates
+            #self.h_dot[x] = 2*pi*f*self.h0*cos(2*pi*f*ti+pi/2)
+            #self.theta_dot[x] = 2*pi*f*self.theta0*cos(2*pi*f*ti)
+    
     def __repr__(self):
         return "Foil Dynamic Parameters: \n \
         reduced frequency [-]: \t % s \n \
@@ -185,5 +209,3 @@ def path_check(path, prompt):
         elif data.lower()=='c':
             sys.exit("\nDirectory needs to be defined in order to proceed")
     return path
-            
-
