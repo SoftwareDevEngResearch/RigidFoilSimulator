@@ -10,21 +10,16 @@ def yesNo(prompt):
 def main(FilePath, FoilGeo, FoilDyn):
     """Runs simulation from reading in input form to processing end data"""
   
-    # ## Generate C File
-    # FilePath = CFile_Generation.genCFile(FilePath, FoilGeo, FoilDyn)
+    ## Generate C File
+    FilePath = CFile_Generation.genCFile(FilePath, FoilGeo, FoilDyn)
 
-    # ## Generate Mesh Files
-    # talkToAnsys.generateMesh_wbjn(FilePath, FoilGeo)
-    # yesNo("Generate project file and mesh file?")
-    # talkToAnsys.run_wbjn(FilePath.WB_path, FilePath.wbjnMesh_path, '-B')
+    ## Generate Journal Files
+    talkToAnsys.generateMesh_wbjn(FilePath, FoilGeo, 1)
+    talkToAnsys.generateFluent_wbjn(FilePath, FoilDyn, 1)
 
-    # ## Generate Fluent Files
-    # yesNo("Project with Mesh file has been generated. Begin simulation? (This will take a long time)")
-    # talkToAnsys.generateFluent_wbjn(FilePath, FoilDyn)
-    # talkToAnsys.run_wbjn(FilePath.WB_path, FilePath.wbjnFluent_path, '-B')
+    if hasattr(FilePath, 'WB_path'):
+        talkToAnsys.run_wbjn(FilePath.WB_path, FilePath.wbjnMesh_path, '-B')
+        yesNo("Project with Mesh file has been generated. Begin simulation? (This will take a long time)")
+        talkToAnsys.run_wbjn(FilePath.WB_path, FilePath.wbjnFluent_path, '-B')
 
-    # ## Process Wall shear data
-    # processWallshear.processWallshear.process_wallshear_data(FilePath.FFF_path, FoilDyn)
-    ## Process Wall shear data
-    output = processWallshear.wallshearData(FilePath.data_path, FoilDyn)
-    plt.show()
+    processWallshear.wallshearData(FilePath.data_path, FoilDyn)

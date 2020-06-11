@@ -1,5 +1,6 @@
 import os, sys
 import numpy as np
+import __main__
 from . import Parameters
 import matplotlib.pyplot as plt
 
@@ -72,7 +73,7 @@ def wallshearData(folder_path, FoilDyn):
     """Go into wall shear folder and process raw data"""
     
     if folder_path == os.path.dirname(os.path.realpath(__file__)) + r"\Tests\Assets":
-        FoilDyn.total_steps = 2
+        FoilDyn.update_totalCycles(2)
     
     file_names = [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
     file_names = list(filter(lambda x:(x.find("les") >= 0 or x.find("wallshear") >0), file_names))
@@ -106,7 +107,7 @@ def wallshearData(folder_path, FoilDyn):
         sys.exit("Vortex has not shed within the simulated time line.")
 
     fig, axs = plt.subplots(3)
-    print("Vortex is shed at time step = %s \nVortex Position = %s" % (shed_time,x_wallshear))
+    print("Output Results:\nVortex is shed at time step = %s \nVortex Position = %s" % (shed_time,x_wallshear))
     desired_steps = np.unique(temp_database[:,-1]).astype(int)[-9:]
     temp_set = np.empty([0,3])
     filtered_data = np.empty([0,3])
@@ -123,12 +124,15 @@ def wallshearData(folder_path, FoilDyn):
     axs[0].grid()
     axs[1].grid()
     axs[2].grid()
-    fig.suptitle(FoilDyn.reduced_frequency)
+    fig.suptitle("k = " + str(FoilDyn.reduced_frequency))
     axs[0].set(xlabel='x position along the chord, [x/C]', ylabel='Wall Shear')
     axs[1].set(xlabel='time step [s]', ylabel='Wall Shear')
     axs[2].set(xlabel='time step [s]', ylabel='x position along the chord, [x/C]')
-    
-    return fig,axs
+    if not "test" in __main__.__file__.lower():
+        print("Exit plots to end procedure")
+        plt.show()
+        
+    return shed_time, x_wallshear
   
 if __name__ == "__main__":
     """testing script functionality"""
