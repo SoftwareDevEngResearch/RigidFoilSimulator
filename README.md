@@ -20,7 +20,7 @@ Installing the package also requires Git.
 **It is not recommended to run the Rigid Foil Simulator package without prior working knowledge** of how computational fluid dynamics is performed. Output results should be analyzed with discretion before being used to expand and inform on scientific understanding.
 
 ## Usage Examples
-To use the rigid foil simulation package, start by defining the 3 class objects to your workspace and pick one of the 5 options that follow.
+The example integrated into this package is of a NACA0015-_like_ airfoil at a reduced frequency of k=0.08. To use the rigid foil simulation package, start by defining the 3 class objects to your workspace and pick one of the 5 options that follow.
     
     from RigidFoilSimer import Parameters
     
