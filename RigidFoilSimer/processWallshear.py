@@ -128,9 +128,10 @@ def wallshearData(folder_path, FoilDyn):
     axs[0].set(xlabel='x position along the chord, [x/C]', ylabel='Wall Shear')
     axs[1].set(xlabel='time step [s]', ylabel='Wall Shear')
     axs[2].set(xlabel='time step [s]', ylabel='x position along the chord, [x/C]')
-    if not "test" in __main__.__file__.lower():
-        print("Exit plots to end procedure")
-        plt.show()
+    if hasattr(__main__,'file__'):
+        if not "test" in __main__.__file__.lower():
+            print("Exit plots to end procedure")
+            plt.show()
         
     return shed_time, x_wallshear
   
