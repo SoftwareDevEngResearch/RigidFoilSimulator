@@ -27,6 +27,7 @@ def genCFile(FilePath, FoilGeo, FoilDyn):
             new_UDF_file.write('%s\n' % lineitem)
     
     print('\nUDF has been generated.\n')
-    if "test" in __main__.__file__.lower():   
-        return UDF_file
+    if hasattr(__main__, '__file__'):
+        if "test" in __main__.__file__.lower():   
+            return UDF_file
     return FilePath
