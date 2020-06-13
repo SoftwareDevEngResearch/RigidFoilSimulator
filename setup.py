@@ -4,7 +4,7 @@ with open("README.md", encoding='utf-8') as fh:
 	long_description = fh.read()
 
 setuptools.setup(
-    name="RigidFoilSimulation", # Replace with your own username
+    name="RigidFoilSimer", # Replace with your own username
     version="0.0.1",
     author="Vickie Ngo",
     author_email="ngov@oregonstate.edu",
@@ -19,5 +19,21 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
-    install_requires=['pytest', 'matplotlib', 'scipy', 'os', 'sys', 'subprocess', 'shutil', 'sympy']
+    zip_safe=False,
+    scripts=['RunRigidFoilSimer.py'],
+    package_dir={'RigidFoilSimer':'./RigidFoilSimer'},
+    include_package_data=True,
+    package_data={'RigidFoilSimer': [
+        'AnsysFiles/*',
+        'Tests/*',
+        'Tests/Assets/*',
+        'AnsysFiles/WorkbenchProjectTemplate_files/*',
+        'AnsysFiles/WorkbenchProjectTemplate_files/dp0/*',
+        'AnsysFiles/WorkbenchProjectTemplate_files/dp0/FFF/DM/*',
+        'AnsysFiles/WorkbenchProjectTemplate_files/dp0/FFF/MECH/*',
+        'AnsysFiles/WorkbenchProjectTemplate_files/dp0/global/MECH/*',
+        'AnsysFiles/WorkbenchProjectTemplate_files/user_files/*',
+        ]},
+    install_requires=['pytest', 'matplotlib', 'scipy', 'sympy']
+
 )
