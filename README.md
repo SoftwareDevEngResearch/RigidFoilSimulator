@@ -1,4 +1,4 @@
-[![DOI](https://zenodo.org/badge/257502422.svg)](https://zenodo.org/badge/latestdoi/257502422)
+[![DOI](https://zenodo.org/badge/257502195.svg)](https://zenodo.org/badge/latestdoi/257502195)
 
 # RigidFoilSimulator
 Python-based oscillating rigid foil simulation package enables novice users to get meaningful computational fluid dynamics results through a streamlined command line interface. 
