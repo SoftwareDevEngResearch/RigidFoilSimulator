@@ -73,8 +73,8 @@ def generateFluent_wbjn(FilePath, FoilDyn, dirReq = 0):
     
     FluentGen_file = open(os.path.dirname(os.path.abspath(__file__)) + "\\AnsysFiles\\WB_genFluent.wbjn", "r").readlines()
     
-    file_item = np.array(['InputFile', '_xVelocity_','UDF_C_File','_chordLength_', '_wallShearFileName_', '_stepSize_', '_totalSteps_'])
-    file_replace = np.array([(FilePath.project_path + '.wbpj').replace("\\","/"), FoilDyn.velocity_inf, (FilePath.folder_path + "\\modRigidPlateFile.c").replace("\\","/"), FoilDyn.chord, str(FoilDyn.reduced_frequency).replace(".","") + '-wallshear', FoilDyn.dt, FoilDyn.total_steps])
+    file_item = np.array(['InputFile', '_xVelocity_','UDF_C_File','_chordLength_', '_wallShearFileName_', '_stepSize_', '_totalSteps_','_totalStepsPlots_'])
+    file_replace = np.array([(FilePath.project_path + '.wbpj').replace("\\","/"), FoilDyn.velocity_inf, (FilePath.folder_path + "\\modRigidPlateFile.c").replace("\\","/"), FoilDyn.chord, str(FoilDyn.reduced_frequency).replace(".","") + '-wallshear', FoilDyn.dt, FoilDyn.total_steps, FoilDyn.plot_steps])
    
     for param in range(len(file_item)):
         FluentGen_file = [w.replace(file_item[param], file_replace[param]) for w in FluentGen_file]

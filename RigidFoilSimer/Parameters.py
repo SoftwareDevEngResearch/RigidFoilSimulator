@@ -98,7 +98,7 @@ class Dynamics(object):
     """Foil parameters are all parameters involved in the motion generation"""
     # class body definition
     
-    def __init__(self, k=0.08, f=1.6, h0=0.075, theta0=70, chord=0.15, steps_per_cycle=1000, total_cycles=0.005, density=1.225):
+    def __init__(self, k=0.08, total_cycles=0.002, plot_steps=200, f=1.6, h0=0.075, theta0=70, chord=0.15, steps_per_cycle=1000, density=1.225):
         self.reduced_frequency = k
         self.freq = f                    
         self.theta0 = np.radians(theta0)
@@ -112,6 +112,7 @@ class Dynamics(object):
         self.h0 = h0
         samp = int(np.ceil(round(total_cycles/f,6)/self.dt) + 1)     #total number of time steps 
         self.total_steps = samp-1
+        self.plot_steps = plot_steps
         self.time = [0]*samp
         self.h = [0]*samp
         self.theta = [0]*samp
