@@ -25,7 +25,7 @@ class FilePath(object):
             print("IMPORTANT: ANSYS Fluent application could not be found. The rest of this package will operate without interacting with live simulations until ANSYS is installed and file paths are reestablished.")
         else:
             self.WB_path = fluent_path[0:int(fluent_path.find("fluent"))] + r"Framework\bin\Win64\RunWB2.exe"
-       
+            self.version = int(fluent_path.split('\\')[-5][1:])
         if self.folder_name == "RigidFoilSimer_Example":
             self.data_path =  os.path.dirname(os.path.realpath(__file__)) + r"\Tests\Assets"
     
@@ -98,7 +98,7 @@ class Dynamics(object):
     """Foil parameters are all parameters involved in the motion generation"""
     # class body definition
     
-    def __init__(self, k=0.08, total_cycles=0.002, plot_steps=200, f=1.6, h0=0.075, theta0=70, chord=0.15, steps_per_cycle=1000, density=1.225):
+    def __init__(self, k=0.08, total_cycles=0.002, plot_steps=2, f=1.6, h0=0.075, theta0=70, chord=0.15, steps_per_cycle=1000, density=1.225):
         self.reduced_frequency = k
         self.freq = f                    
         self.theta0 = np.radians(theta0)
