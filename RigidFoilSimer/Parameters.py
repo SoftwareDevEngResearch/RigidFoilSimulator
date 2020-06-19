@@ -4,6 +4,7 @@ from scipy.optimize import fsolve
 from sympy import symbols, Eq, solve
 import sys, os
 import shutil
+import __main__
 
 
 pi = np.pi
@@ -11,8 +12,8 @@ cos = np.cos
 
 class FilePath(object):
     """Establishes paths that are referenced throughout the package"""
-    def __init__(self, folder_parentpath, folder_name="RigidFoilSimer_Example", project_name="NACA0015_Example"):
-        self.folder_path = (folder_parentpath + "\\" + folder_name).replace("/","\\")
+    def __init__(self, folder_parentpath, folder_name="RigidFoilSimer_Example", project_name="Project_Example"):
+        self.folder_path = path_check((folder_parentpath + "\\" + folder_name).replace("/","\\"), "\nStore simulation files to %s?\nA) Yes, use/create the folder and save to it \nB) No, I want to specify a different folder directory \nC) No, I want to cancel this process\nPick an answer of A, B, or C: ")
         self.folder_name = folder_name
         self.project_path = (self.folder_path + "\\" + project_name).replace("/","\\")
         self.project_name = project_name
@@ -98,7 +99,7 @@ class Dynamics(object):
     """Foil parameters are all parameters involved in the motion generation"""
     # class body definition
     
-    def __init__(self, k=0.08, total_cycles=0.002, plot_steps=2, f=1.6, h0=0.075, theta0=70, chord=0.15, steps_per_cycle=1000, density=1.225):
+    def __init__(self, k=0.12, total_cycles=0.002, plot_steps=2, f=1.6, h0=0.075, theta0=70, chord=0.15, steps_per_cycle=1000, density=1.225):
         self.reduced_frequency = k
         self.freq = f                    
         self.theta0 = np.radians(theta0)
@@ -176,8 +177,11 @@ def query_yes_no(question, default=None):
         raise ValueError("invalid default answer: '%s'" % default)
 
     while True:
-        sys.stdout.write(question + prompt)
-        choice = input().lower()
+        if specialCase() == False:
+            sys.stdout.write(question + prompt)
+            choice = input().lower()
+        else:
+            choice = "y"
         if default is not None and choice == '':
             return valid[default]
         elif choice in valid:
@@ -189,7 +193,10 @@ def query_yes_no(question, default=None):
 def path_check(path, prompt):
     """figure out whether file exists and if so, how to handle it"""
     while True:
-        data = input(prompt % (path))
+        if specialCase() == True:
+            data = 'a'
+        else:
+            data = input(prompt % (path))
         if data.lower() not in ('a', 'b', 'c'):
             print("Not an appropriate choice.")
         elif data.lower()=='a':
@@ -212,3 +219,12 @@ def path_check(path, prompt):
         elif data.lower()=='c':
             sys.exit("\nDirectory needs to be defined in order to proceed")
     return path
+    
+def specialCase():
+    if hasattr(__main__, '__file__'):  
+        if "test" in __main__.__file__.lower() or "batch" in __main__.__file__.lower():
+            return True
+        else:
+            return False
+    else:
+        return False

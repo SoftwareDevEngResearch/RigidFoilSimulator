@@ -47,7 +47,7 @@ def run_wbjn(WB_path, wbjn_path, method):
   
 
 def generateMesh_wbjn(FilePath, FoilGeo, dirReq = 0):
-
+    print(FilePath)
     MeshGen_file = open(os.path.dirname(os.path.abspath(__file__)) + "\\AnsysFiles\\WB_genFileGeomMesh.wbjn", "r").readlines()
 
     file_search = np.array([[os.path.dirname(os.path.abspath(__file__)) + '\\AnsysFiles\\WorkbenchProjectTemplate.wbpj','InputFile'],[FilePath.project_path + ".wbpj",'SaveFile']])
