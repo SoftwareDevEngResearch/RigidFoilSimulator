@@ -12,14 +12,18 @@ cos = np.cos
 
 class FilePath(object):
     """Establishes paths that are referenced throughout the package"""
-    def __init__(self, folder_parentpath, folder_name="RigidFoilSimer_Example", project_name="Project_Example"):
-        self.folder_path = path_check((folder_parentpath + "\\" + folder_name).replace("/","\\"), "\nStore simulation files to %s?\nA) Yes, use/create the folder and save to it \nB) No, I want to specify a different folder directory \nC) No, I want to cancel this process\nPick an answer of A, B, or C: ")
+    def __init__(self, folder_parentpath, folder_name="RigidFoilSimer_Example", project_name="Project_Example", default = 0):
+        self.folder_path = path_check((folder_parentpath + "\\" + folder_name).replace("/","\\"), "\nStore simulation files to %s?\nA) Yes, use/create the folder and save to it \nB) No, I want to specify a different folder directory \nC) No, I want to cancel this process\nPick an answer of A, B, or C: ", default)
         self.folder_name = folder_name
         self.project_path = (self.folder_path + "\\" + project_name).replace("/","\\")
         self.project_name = project_name
         self.wbjnMesh_path = self.project_path + "_genFileGeomMesh.wbjn"
         self.wbjnFluent_path = self.project_path + "_genFileFluent.wbjn"
-        self.data_path = self.project_path + r"_files\dp0\FFF\Fluent"
+        if not 'google' in self.project_path.lower():
+            self.data_path = self.project_path + r"_files\dp0\FFF\Fluent"
+        else:
+            self.data_path = self.project_path
+        self.org_path = 'None'
 
         fluent_path = shutil.which("fluent")
         if fluent_path == None:
@@ -53,6 +57,7 @@ class Geometry(object):
     
     def __init__(self, chord=0.15, leading_ellipse_y = 0.15*0.075, leading_ellipse_x = 0.15*0.3, trailing_ellipse_y = 0.001, trailing_ellipse_x=0.006):
         """Initializes the main parameters for DesignModeler, default parameters are for the flat rigid plate geometry"""
+        self.geo_name = 'None'
         self.leading_ellipse_y = leading_ellipse_y
         self.leading_ellipse_x = leading_ellipse_x
         self.leading_ellipse_origin = -chord/2 + self.leading_ellipse_x
@@ -99,7 +104,7 @@ class Dynamics(object):
     """Foil parameters are all parameters involved in the motion generation"""
     # class body definition
     
-    def __init__(self, k=0.12, total_cycles=0.002, plot_steps=2, f=1.6, h0=0.075, theta0=70, chord=0.15, steps_per_cycle=1000, density=1.225):
+    def __init__(self, k=0.12, total_cycles=0.002, plot_steps=2, chord = 0.15, f=1.6, h0=0.075, theta0=70, steps_per_cycle=1000, density=1.225):
         self.reduced_frequency = k
         self.freq = f                    
         self.theta0 = np.radians(theta0)
@@ -111,7 +116,7 @@ class Dynamics(object):
         self.chord = chord
         self.velocity_inf = f*chord/k
         self.h0 = h0
-        samp = int(np.ceil(round(total_cycles/f,6)/self.dt) + 1)     #total number of time steps 
+        samp = int(np.ceil(round(total_cycles/f,6)/self.dt) + 1) + plot_steps   #total number of time steps 
         self.total_steps = samp-1
         self.plot_steps = plot_steps
         self.time = [0]*samp
@@ -190,14 +195,16 @@ def query_yes_no(question, default=None):
             sys.stdout.write("Please respond with 'yes' or 'no' "
                              "(or 'y' or 'n').\n")
 
-def path_check(path, prompt):
+def path_check(path, prompt, default):
     """figure out whether file exists and if so, how to handle it"""
     while True:
         if specialCase() == True:
             data = 'a'
+        elif default == 1:
+            data = 'd'
         else:
             data = input(prompt % (path))
-        if data.lower() not in ('a', 'b', 'c'):
+        if data.lower() not in ('a', 'b', 'c', 'd'):
             print("Not an appropriate choice.")
         elif data.lower()=='a':
             try:
@@ -218,6 +225,15 @@ def path_check(path, prompt):
             path = input("\nEnter the full path of the folder you would like the file to be saved w/o quotations: ")
         elif data.lower()=='c':
             sys.exit("\nDirectory needs to be defined in order to proceed")
+            
+        elif data.lower()=='d':
+            if not os.path.exists(path):
+                if query_yes_no("\nOutput folder does not exist, enter new file path?")==True:
+                    path = input("\nEnter the full path of the folder you would like the file to be saved w/o quotations: ")
+                else:
+                    sys.exit("Data could not be found.")
+            else:
+                break
     return path
     
 def specialCase():

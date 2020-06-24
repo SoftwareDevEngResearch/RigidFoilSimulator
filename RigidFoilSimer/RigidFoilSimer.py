@@ -22,4 +22,4 @@ def main(FilePath, FoilGeo, FoilDyn):
         yesNo("Project with Mesh file has been generated. Begin simulation? (This will take a long time)")
         talkToAnsys.run_wbjn(FilePath.WB_path, FilePath.wbjnFluent_path, '-B')
 
-    processWallshear.wallshearData(FilePath, FoilDyn)
+    processWallshear.wallshearData(FilePath, FoilDyn, FoilGeo)

@@ -11,11 +11,11 @@ def convert_2_txt(file_path):
         file_path = new_path
     return file_path 
     
-def add_data_columns(file_path, chord, theta, h):
+def add_data_columns(file_path, chord, theta, h, cutoff):
     """Check to see if new columns of rotated data have been added and add if needed"""    
     file_object = open(file_path,"r")
     headers = file_object.readline()
-    variable_names = np.array(headers.replace(",", " ").strip().split())
+    variable_names = np.array(headers.replace(",", " ").replace("_","-").strip().split())
     var_count = len(variable_names)
     if (headers.find("x-rotated")<0):
         #If this header column does not exist, it means the data has not yet been processed
@@ -37,7 +37,7 @@ def add_data_columns(file_path, chord, theta, h):
             
             # Filter to only collect data for the leading edge of the correct surface
             top_bottom = int(1 if xyR[1] > 0 else -1)
-            frontal_region = int(1 if xyR[0] < 0.2*chord else -1)
+            frontal_region = int(1 if xyR[0] < cutoff *chord else -1)
     
             if top_bottom*theta > 0 and frontal_region == 1: 
                 wallshear = cols[x_wallshear_col]*np.cos(theta)-cols[y_wallshear_col]*np.sin(theta)
@@ -62,13 +62,18 @@ def add_data_columns(file_path, chord, theta, h):
     file_object.close()
     return final_data
 
-def wallshearData(Files, FoilDyn):
+def wallshearData(Files, FoilDyn, FoilGeo, cutoff =0.2):
     """Go into wall shear folder and process raw data"""
     
     data_path = Files.data_path
     
+    if Files.org_path == 'None':
+        savePath = Files.folder_path+"\\_mod-"
+    else:
+        savePath = Files.org_path + "\\" + FoilGeo.geo_name + "-" + "{:.2f}".format(FoilDyn.reduced_frequency).replace(".","") + "-"
+    
     file_names = [f for f in os.listdir(data_path) if os.path.isfile(os.path.join(data_path, f))]
-    file_names = list(filter(lambda x:(x.find("les") >= 0 or x.find("wallshear") >0), file_names))
+    file_names = list(filter(lambda x:(x.find("les") >= 0 or x.find("wall") >= 0 or x.find("wss") >= 0), file_names))
 
     if data_path == os.path.dirname(os.path.realpath(__file__)) + r"\Tests\Assets":
         FoilDyn.update_totalCycles(2)
@@ -76,19 +81,17 @@ def wallshearData(Files, FoilDyn):
         for x in modfiles:
             os.remove(data_path+"\\"+x)
         file_names = [f for f in os.listdir(data_path) if os.path.isfile(os.path.join(data_path, f))]
-        file_names = list(filter(lambda x:(x.find("les") >= 0 or x.find("wallshear") >0), file_names))
+        file_names = list(filter(lambda x:(x.find("les") >= 0 or x.find("wall") >0), file_names))
     
     temp_database = np.empty([0,3])
     ct = 0
-
     for x in range(len(file_names)):
         file_path = convert_2_txt(data_path+"\\"+file_names[x])
         time_step = int(file_names[x].split('-')[-1].split('.')[0])
         theta = FoilDyn.theta[time_step]
-
-        if round(theta,3) != 0 and time_step > 1000:
-            final_data = add_data_columns(file_path, FoilDyn.chord, FoilDyn.theta[time_step], FoilDyn.h[time_step])
-            np.savetxt(Files.folder_path+"\\_mod-"+file_names[x], final_data[:-1,:], fmt="%s")
+        if round(theta,3) != 0 and time_step > 2000 and time_step % 10 == 0:
+            final_data = add_data_columns(file_path, FoilDyn.chord, FoilDyn.theta[time_step], FoilDyn.h[time_step], cutoff)
+            np.savetxt(savePath + str(time_step) + '.txt', final_data[:-1,:], fmt="%s")
             final_data = final_data[1:,:].astype(float)
             processed_data = np.transpose(np.append([final_data[:,-3]], [final_data[:,-1]], axis=0))
             processed_data2 = np.append(processed_data, np.full((processed_data.shape[0],1), time_step).astype(int) , axis=1)
