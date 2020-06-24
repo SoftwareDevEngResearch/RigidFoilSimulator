@@ -16,11 +16,11 @@ def add_data_columns(file_path, chord, theta, h, cutoff):
     file_object = open(file_path,"r")
     headers = file_object.readline()
     variable_names = np.array(headers.replace(",", " ").replace("_","-").strip().split())
-    var_count = len(variable_names)
+    var_count = len(variable_names)   
+    x_wallshear_col = np.where(variable_names == "x-wall-shear")
+    y_wallshear_col = np.where(variable_names == "y-wall-shear")
     if (headers.find("x-rotated")<0):
         #If this header column does not exist, it means the data has not yet been processed
-        x_wallshear_col = np.where(variable_names == "x-wall-shear")
-        y_wallshear_col = np.where(variable_names == "y-wall-shear")
         
         c, s= np.cos(theta), np.sin(theta)
         R = np.array(((c, -s), (s, c)))
@@ -50,15 +50,20 @@ def add_data_columns(file_path, chord, theta, h, cutoff):
         set_data = data[1:,:].astype(float)
         sorted_data = set_data[set_data[:, var_count].argsort()]
         final_data = np.append(variable_names, sorted_data, axis=0)
-        #np.savetxt(file_path, final_data[:-1,:], fmt="%s") 
 
     else:
-        print("Already Processed")
         final_data = [np.array(variable_names)]
         x_rotated_col = int(np.where(variable_names == "x-rotated")[0])
         for line in file_object:
             cols = np.array([float(i) for i in line.replace(","," ").strip().split()])
-            final_data = np.append(final_data, [cols], axis=0)       
+            
+            # Filter to only collect data for the leading edge of the correct surface
+            top_bottom = int(1 if cols[-2] > 0 else -1)
+            frontal_region = int(1 if cols[-3] < cutoff *chord else -1)
+                
+            if top_bottom*theta > 0 and frontal_region == 1:              
+                final_data = np.append(final_data, [cols], axis=0)  
+                
     file_object.close()
     return final_data
 
@@ -73,7 +78,7 @@ def wallshearData(Files, FoilDyn, FoilGeo, cutoff =0.2):
         savePath = Files.org_path + "\\" + FoilGeo.geo_name + "-" + "{:.2f}".format(FoilDyn.reduced_frequency).replace(".","") + "-"
     
     file_names = [f for f in os.listdir(data_path) if os.path.isfile(os.path.join(data_path, f))]
-    file_names = list(filter(lambda x:(x.find("les") >= 0 or x.find("wall") >= 0 or x.find("wss") >= 0), file_names))
+    file_names = list(filter(lambda x:(x.find("les") >= 0 or x.find("wall") >= 0 or x.find(FoilGeo.geo_name) >= 0), file_names))
 
     if data_path == os.path.dirname(os.path.realpath(__file__)) + r"\Tests\Assets":
         FoilDyn.update_totalCycles(2)
@@ -81,24 +86,25 @@ def wallshearData(Files, FoilDyn, FoilGeo, cutoff =0.2):
         for x in modfiles:
             os.remove(data_path+"\\"+x)
         file_names = [f for f in os.listdir(data_path) if os.path.isfile(os.path.join(data_path, f))]
-        file_names = list(filter(lambda x:(x.find("les") >= 0 or x.find("wall") >0), file_names))
+        file_names = list(filter(lambda x:(x.find("les") >= 0 or x.find("wall") >0 or x.find(FoilGeo.geo_name) >= 0), file_names))
     
     temp_database = np.empty([0,3])
     ct = 0
+    print(file_names.sort())
     for x in range(len(file_names)):
         file_path = convert_2_txt(data_path+"\\"+file_names[x])
         time_step = int(file_names[x].split('-')[-1].split('.')[0])
         theta = FoilDyn.theta[time_step]
-        if round(theta,3) != 0 and time_step > 2000 and time_step % 10 == 0:
+        if round(theta,3) != 0 and time_step > 2000: # and time_step % 10 == 0:
             final_data = add_data_columns(file_path, FoilDyn.chord, FoilDyn.theta[time_step], FoilDyn.h[time_step], cutoff)
-            np.savetxt(savePath + str(time_step) + '.txt', final_data[:-1,:], fmt="%s")
+            # np.savetxt(savePath + str(time_step) + '.txt', final_data[:-1,:], fmt="%s")
             final_data = final_data[1:,:].astype(float)
             processed_data = np.transpose(np.append([final_data[:,-3]], [final_data[:,-1]], axis=0))
             processed_data2 = np.append(processed_data, np.full((processed_data.shape[0],1), time_step).astype(int) , axis=1)
             temp_database = np.append(temp_database, processed_data2, axis=0)
             x = processed_data[1:,-2].astype(float)/FoilDyn.chord
             wallshear = processed_data[1:,-1].astype(float)
-            if np.min(wallshear) < 0 and wallshear[0] > 0 and ct <= 4:
+            if np.min(wallshear) < 0 and wallshear[0] > 0 and ct < 4:
                 if ct == 0: 
                     shed_time = time_step
                     shed_x = x
@@ -118,7 +124,6 @@ def wallshearData(Files, FoilDyn, FoilGeo, cutoff =0.2):
                     temp_x = temp_database[temp_database[:, -1] == step,:][np.argmin(temp_database[temp_database[:, -1] == step,1]),0]
                     temp_ws = np.min(temp_database[temp_database[:, -1] == step,1])
                     temp_set = np.append(temp_set, [[step, temp_x, temp_ws]], axis=0)
-                #print(temp_set)
                 axs[1].plot(temp_set[:,0], temp_set[:,2])
                 axs[2].plot(temp_set[:,0], temp_set[:,1]/FoilDyn.chord)
                 axs[0].legend()

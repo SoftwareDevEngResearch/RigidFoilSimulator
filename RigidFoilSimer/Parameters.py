@@ -19,10 +19,13 @@ class FilePath(object):
         self.project_name = project_name
         self.wbjnMesh_path = self.project_path + "_genFileGeomMesh.wbjn"
         self.wbjnFluent_path = self.project_path + "_genFileFluent.wbjn"
-        if not 'google' in self.project_path.lower():
-            self.data_path = self.project_path + r"_files\dp0\FFF\Fluent"
-        else:
+        if 'google' in self.project_path.lower():
             self.data_path = self.project_path
+        elif 'none' in self.project_name.lower():
+            self.data_path = self.folder_path
+        else:
+            self.data_path = self.project_path + r"_files\dp0\FFF\Fluent"
+            
         self.org_path = 'None'
 
         fluent_path = shutil.which("fluent")
