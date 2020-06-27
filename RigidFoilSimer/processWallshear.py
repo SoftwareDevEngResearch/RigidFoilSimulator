@@ -81,7 +81,7 @@ def wallshearData(Files, FoilDyn, FoilGeo, cutoff =0.2):
     file_names = list(filter(lambda x:(x.find("les") >= 0 or x.find("wall") >= 0 or x.find(FoilGeo.geo_name) >= 0), file_names))
 
     if data_path == os.path.dirname(os.path.realpath(__file__)) + r"\Tests\Assets":
-        FoilDyn.update_totalCycles(2)
+        FoilDyn.update_totalCycles(2,0)
         modfiles = list(filter(lambda x:(x.find("mod-") >= 0), file_names))
         for x in modfiles:
             os.remove(data_path+"\\"+x)
@@ -90,14 +90,14 @@ def wallshearData(Files, FoilDyn, FoilGeo, cutoff =0.2):
     
     temp_database = np.empty([0,3])
     ct = 0
-    print(file_names.sort())
+    file_names = sorted(file_names)
     for x in range(len(file_names)):
         file_path = convert_2_txt(data_path+"\\"+file_names[x])
         time_step = int(file_names[x].split('-')[-1].split('.')[0])
         theta = FoilDyn.theta[time_step]
         if round(theta,3) != 0 and time_step > 2000: # and time_step % 10 == 0:
             final_data = add_data_columns(file_path, FoilDyn.chord, FoilDyn.theta[time_step], FoilDyn.h[time_step], cutoff)
-            # np.savetxt(savePath + str(time_step) + '.txt', final_data[:-1,:], fmt="%s")
+            np.savetxt(savePath + str(time_step) + '.txt', final_data[:-1,:], fmt="%s")
             final_data = final_data[1:,:].astype(float)
             processed_data = np.transpose(np.append([final_data[:,-3]], [final_data[:,-1]], axis=0))
             processed_data2 = np.append(processed_data, np.full((processed_data.shape[0],1), time_step).astype(int) , axis=1)
@@ -140,6 +140,8 @@ def wallshearData(Files, FoilDyn, FoilGeo, cutoff =0.2):
     try:
         shed_time
     except NameError:
-        sys.exit("Vortex has not shed within the simulated time line.")
+        shed_time = 0
+        x_wallshear = -1
+        print("Vortex has not shed within the simulated time line.")
       
     return shed_time, x_wallshear
