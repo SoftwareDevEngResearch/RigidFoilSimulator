@@ -133,7 +133,6 @@ class Dynamics(object):
             ## These are the heaving and pitching rates
             #self.h_dot[x] = 2*pi*f*self.h0*cos(2*pi*f*ti+pi/2)
             #self.theta_dot[x] = 2*pi*f*self.theta0*cos(2*pi*f*ti)
-        print(self.theta)
     
     def update_totalCycles(self, total_cycles, plot_steps):   
         self.just_steps = int(np.ceil(round(total_cycles/f,6)/self.dt)) 
