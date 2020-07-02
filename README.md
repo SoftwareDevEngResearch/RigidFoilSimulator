@@ -11,7 +11,7 @@ This package can be installed via:
 ## Dependencies
 The simulation itself is ran through the ANSYS Workbench software package and therefore relies on the successful installation of ANSYS and its dependencies. Some of the dependencies include:
   1. This package was developed using Windows, use with caution when working on other systems
-  2. ANSYS 2019 or later. [See more instructions here](#-ansys-visual-studio-setup)
+  2. ANSYS 2019 or later. [See more instructions here](#Ansys-Visual-Studio-Setup)
   3. Visual Studio
 
 Installing the package also requires Git.  
