@@ -11,7 +11,7 @@ This package can be installed via:
 ## Dependencies
 The simulation itself is ran through the ANSYS Workbench software package and therefore relies on the successful installation of ANSYS and its dependencies. Some of the dependencies include:
   1. This package was developed using Windows, use with caution when working on other systems
-  2. ANSYS 2019 or later
+  2. ANSYS 2019 or later. [See more instructions here](#-ansys-visual-studio-setup)
   3. Visual Studio
 
 Installing the package also requires Git.  
@@ -93,3 +93,6 @@ For running the example case, the output is demonstrated using data that is incl
 \*\*\* Required, for example, "C:\Users\<username>\Desktop", but for the example case, this directory will not be generated or referenced.
 
 \*\*\*\* If the folder name is left as the default, "RigidFoilSimer_Example", the package WILL treat it as an example so be sure to change the folder name for non-example operations.
+
+# Ansys Visual Studio Setup
+Talking points
