@@ -47,7 +47,7 @@ def run_wbjn(WB_path, wbjn_path, method):
   
 
 def generateMesh_wbjn(FilePath, FoilGeo, dirReq = 0):
-
+    print(FilePath)
     MeshGen_file = open(os.path.dirname(os.path.abspath(__file__)) + "\\AnsysFiles\\WB_genFileGeomMesh.wbjn", "r").readlines()
 
     file_search = np.array([[os.path.dirname(os.path.abspath(__file__)) + '\\AnsysFiles\\WorkbenchProjectTemplate.wbpj','InputFile'],[FilePath.project_path + ".wbpj",'SaveFile']])
@@ -72,9 +72,12 @@ def generateMesh_wbjn(FilePath, FoilGeo, dirReq = 0):
 def generateFluent_wbjn(FilePath, FoilDyn, dirReq = 0):
     
     FluentGen_file = open(os.path.dirname(os.path.abspath(__file__)) + "\\AnsysFiles\\WB_genFluent.wbjn", "r").readlines()
-    
-    file_item = np.array(['InputFile', '_xVelocity_','UDF_C_File','_chordLength_', '_wallShearFileName_', '_stepSize_', '_totalSteps_'])
-    file_replace = np.array([(FilePath.project_path + '.wbpj').replace("\\","/"), FoilDyn.velocity_inf, (FilePath.folder_path + "\\modRigidPlateFile.c").replace("\\","/"), FoilDyn.chord, str(FoilDyn.reduced_frequency).replace(".","") + '-wallshear', FoilDyn.dt, FoilDyn.total_steps])
+    if FilePath.version < 200:
+        ASCII = 1
+    else:
+        ASCII = 0
+    file_item = np.array(['InputFile', '_xVelocity_','UDF_C_File','_chordLength_', '_wallShearFileName_', '_stepSize_', '_totalSteps_','_totalStepsPlots_', '_ASCII_'])
+    file_replace = np.array([(FilePath.project_path + '.wbpj').replace("\\","/"), FoilDyn.velocity_inf, (FilePath.folder_path + "\\modRigidPlateFile.c").replace("\\","/"), FoilDyn.chord, str(FoilDyn.reduced_frequency).replace(".","") + '-wallshear', FoilDyn.dt, FoilDyn.just_steps, FoilDyn.plot_steps, ASCII])
    
     for param in range(len(file_item)):
         FluentGen_file = [w.replace(file_item[param], file_replace[param]) for w in FluentGen_file]

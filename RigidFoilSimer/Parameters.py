@@ -4,6 +4,7 @@ from scipy.optimize import fsolve
 from sympy import symbols, Eq, solve
 import sys, os
 import shutil
+import __main__
 
 
 pi = np.pi
@@ -11,21 +12,28 @@ cos = np.cos
 
 class FilePath(object):
     """Establishes paths that are referenced throughout the package"""
-    def __init__(self, folder_parentpath, folder_name="RigidFoilSimer_Example", project_name="NACA0015_Example"):
-        self.folder_path = (folder_parentpath + "\\" + folder_name).replace("/","\\")
+    def __init__(self, folder_parentpath, folder_name="RigidFoilSimer_Example", project_name="Project_Example", default = 0):
+        self.folder_path = path_check((folder_parentpath + "\\" + folder_name).replace("/","\\"), "\nStore simulation files to %s?\nA) Yes, use/create the folder and save to it \nB) No, I want to specify a different folder directory \nC) No, I want to cancel this process\nPick an answer of A, B, or C: ", default)
         self.folder_name = folder_name
         self.project_path = (self.folder_path + "\\" + project_name).replace("/","\\")
         self.project_name = project_name
         self.wbjnMesh_path = self.project_path + "_genFileGeomMesh.wbjn"
         self.wbjnFluent_path = self.project_path + "_genFileFluent.wbjn"
-        self.data_path = self.project_path + r"_files\dp0\FFF\Fluent"
+        if 'google' in self.project_path.lower():
+            self.data_path = self.project_path
+        elif 'none' in self.project_name.lower():
+            self.data_path = self.folder_path
+        else:
+            self.data_path = self.project_path + r"_files\dp0\FFF\Fluent"
+            
+        self.org_path = 'None'
 
         fluent_path = shutil.which("fluent")
         if fluent_path == None:
             print("IMPORTANT: ANSYS Fluent application could not be found. The rest of this package will operate without interacting with live simulations until ANSYS is installed and file paths are reestablished.")
         else:
             self.WB_path = fluent_path[0:int(fluent_path.find("fluent"))] + r"Framework\bin\Win64\RunWB2.exe"
-       
+            self.version = int(fluent_path.split('\\')[-5][1:])
         if self.folder_name == "RigidFoilSimer_Example":
             self.data_path =  os.path.dirname(os.path.realpath(__file__)) + r"\Tests\Assets"
     
@@ -52,6 +60,7 @@ class Geometry(object):
     
     def __init__(self, chord=0.15, leading_ellipse_y = 0.15*0.075, leading_ellipse_x = 0.15*0.3, trailing_ellipse_y = 0.001, trailing_ellipse_x=0.006):
         """Initializes the main parameters for DesignModeler, default parameters are for the flat rigid plate geometry"""
+        self.geo_name = 'None'
         self.leading_ellipse_y = leading_ellipse_y
         self.leading_ellipse_x = leading_ellipse_x
         self.leading_ellipse_origin = -chord/2 + self.leading_ellipse_x
@@ -98,7 +107,7 @@ class Dynamics(object):
     """Foil parameters are all parameters involved in the motion generation"""
     # class body definition
     
-    def __init__(self, k=0.08, f=1.6, h0=0.075, theta0=70, chord=0.15, steps_per_cycle=1000, total_cycles=0.005, density=1.225):
+    def __init__(self, k=0.12, total_cycles=0.002, plot_steps=2, chord = 0.15, f=1.6, h0=0.075, theta0=70, steps_per_cycle=1000, density=1.225):
         self.reduced_frequency = k
         self.freq = f                    
         self.theta0 = np.radians(theta0)
@@ -110,8 +119,9 @@ class Dynamics(object):
         self.chord = chord
         self.velocity_inf = f*chord/k
         self.h0 = h0
-        samp = int(np.ceil(round(total_cycles/f,6)/self.dt) + 1)     #total number of time steps 
-        self.total_steps = samp-1
+        self.just_steps = int(np.ceil(round(total_cycles/f,6)/self.dt)) 
+        self.plot_steps = plot_steps
+        samp = self.just_steps + self.plot_steps +1  #total number of time steps 
         self.time = [0]*samp
         self.h = [0]*samp
         self.theta = [0]*samp
@@ -124,18 +134,18 @@ class Dynamics(object):
             #self.h_dot[x] = 2*pi*f*self.h0*cos(2*pi*f*ti+pi/2)
             #self.theta_dot[x] = 2*pi*f*self.theta0*cos(2*pi*f*ti)
     
-    def update_totalCycles(self, total_cycles):
-        self.total_cycles = total_cycles
-        samp = int(np.ceil(round(total_cycles/self.freq,6)/self.dt) + 1)     #total number of time steps 
-        self.total_steps = samp-1
+    def update_totalCycles(self, total_cycles, plot_steps):   
+        self.just_steps = int(np.ceil(round(total_cycles/f,6)/self.dt)) 
+        self.plot_steps = plot_steps
+        samp = self.just_steps + self.plot_steps +1  #total number of time steps 
         self.time = [0]*samp
         self.h = [0]*samp
         self.theta = [0]*samp
         for x in range(samp):
             ti = round(x*self.dt,5)
             self.time[x] = ti
-            self.h[x] = self.h0*cos(2*pi*x/self.steps_per_cycle)-self.h0
-            self.theta[x] = self.theta0*cos(2*pi*x/self.steps_per_cycle+pi/2)
+            self.h[x] = self.h0*cos(2*pi*x/steps_per_cycle)-self.h0
+            self.theta[x] = self.theta0*cos(2*pi*x/steps_per_cycle+pi/2)
             ## These are the heaving and pitching rates
             #self.h_dot[x] = 2*pi*f*self.h0*cos(2*pi*f*ti+pi/2)
             #self.theta_dot[x] = 2*pi*f*self.theta0*cos(2*pi*f*ti)
@@ -175,8 +185,11 @@ def query_yes_no(question, default=None):
         raise ValueError("invalid default answer: '%s'" % default)
 
     while True:
-        sys.stdout.write(question + prompt)
-        choice = input().lower()
+        if specialCase() == False:
+            sys.stdout.write(question + prompt)
+            choice = input().lower()
+        else:
+            choice = "y"
         if default is not None and choice == '':
             return valid[default]
         elif choice in valid:
@@ -185,11 +198,16 @@ def query_yes_no(question, default=None):
             sys.stdout.write("Please respond with 'yes' or 'no' "
                              "(or 'y' or 'n').\n")
 
-def path_check(path, prompt):
+def path_check(path, prompt, default):
     """figure out whether file exists and if so, how to handle it"""
     while True:
-        data = input(prompt % (path))
-        if data.lower() not in ('a', 'b', 'c'):
+        if specialCase() == True:
+            data = 'a'
+        elif default == 1:
+            data = 'd'
+        else:
+            data = input(prompt % (path))
+        if data.lower() not in ('a', 'b', 'c', 'd'):
             print("Not an appropriate choice.")
         elif data.lower()=='a':
             try:
@@ -210,4 +228,22 @@ def path_check(path, prompt):
             path = input("\nEnter the full path of the folder you would like the file to be saved w/o quotations: ")
         elif data.lower()=='c':
             sys.exit("\nDirectory needs to be defined in order to proceed")
+            
+        elif data.lower()=='d':
+            if not os.path.exists(path):
+                if query_yes_no("\nOutput folder does not exist, enter new file path?")==True:
+                    path = input("\nEnter the full path of the folder you would like the file to be saved w/o quotations: ")
+                else:
+                    sys.exit("Data could not be found.")
+            else:
+                break
     return path
+    
+def specialCase():
+    if hasattr(__main__, '__file__'):  
+        if "test" in __main__.__file__.lower() or "batch" in __main__.__file__.lower():
+            return True
+        else:
+            return False
+    else:
+        return False

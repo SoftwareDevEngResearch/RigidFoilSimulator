@@ -2,18 +2,20 @@
 
 
 # RigidFoilSimulator
-Python-based oscillating rigid foil simulation package enables novice users to get meaningful computational fluid dynamics results through a streamlined command line interface. 
+Python-based oscillating rigid foil simulation package enables novice users to get meaningful computational fluid dynamics results through a streamlined command line interface.
 
 ## Installation
 This package can be installed via:
 
     pip install git+https://github.com/SoftwareDevEngResearch/RigidFoilSimulator
+    
+[See instructions for Environment Variables setup here](#Environment-Variables-Setup)  
 
 ## Dependencies
 The simulation itself is ran through the ANSYS Workbench software package and therefore relies on the successful installation of ANSYS and its dependencies. Some of the dependencies include:
   1. This package was developed using Windows, use with caution when working on other systems
-  2. ANSYS 2019 or later
-  3. Visual Studio
+  2. ANSYS 2019 or later. 
+  3. Visual Studio 2017. VS 2019 is not yet compatible.
 
 Installing the package also requires Git.  
     
@@ -94,3 +96,17 @@ For running the example case, the output is demonstrated using data that is incl
 \*\*\* Required, for example, "C:\Users\<username>\Desktop", but for the example case, this directory will not be generated or referenced.
 
 \*\*\*\* If the folder name is left as the default, "RigidFoilSimer_Example", the package WILL treat it as an example so be sure to change the folder name for non-example operations.
+
+# Environment Variables Setup
+To ensure that ANSYS and Visual Studio are installed correctly, check to verify the following environment variables are correctly called out:
+
+| Variable     | Allowed Values                                                                                         |
+|--------------|--------------------------------------------------------------------------------------------------------|
+| `FLUENT_INC` | C:\Program Files\\\<ANSYS Application Name>\v\<version number>\fluent                                     |
+| `INCLUDE`    | C:\Program Files (x86)\Microsoft Visual Studio\\\<Year>\Enterprise\VC\Auxiliary\VS\include               |
+| `LIB`        | C:\Program Files (x86)\Microsoft Visual Studio\\\<Year>\Enterprise\VC\Auxiliary\VS\lib                   |
+| `Path`       | C:\Program Files (x86)\Microsoft Visual Studio\\\<Year>\Enterprise                                       |
+|              | C:\Program Files\\\<ANSYS Application Name>\v\<version number>\fluent\ntbin\win64                         |
+|              | C:\Program Files (x86)\Microsoft Visual Studio\\\<Year>\Enterprise\VC\Tools\MSVC\14.24.28314\bin\Hostx64 |
+|              | C:\Program Files (x86)\Microsoft Visual Studio\\\<Year>\Enterprise\VC\Tools\MSVC\14.24.28314\bin\Hostx86 |
+|              | C:\Users\\\<username>\AppData\Local\Programs\Git\cmd                                                     |
