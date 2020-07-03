@@ -1,12 +1,14 @@
 [![DOI](https://zenodo.org/badge/257502422.svg)](https://zenodo.org/badge/latestdoi/257502422)
 
 # RigidFoilSimulator
-Python-based oscillating rigid foil simulation package enables novice users to get meaningful computational fluid dynamics results through a streamlined command line interface. [See instructions for Environment Variables setup here](#Environment-Variables-Setup)
+Python-based oscillating rigid foil simulation package enables novice users to get meaningful computational fluid dynamics results through a streamlined command line interface.
 
 ## Installation
 This package can be installed via:
 
     pip install git+https://github.com/SoftwareDevEngResearch/RigidFoilSimulator
+    
+[See instructions for Environment Variables setup here](#Environment-Variables-Setup)  
 
 ## Dependencies
 The simulation itself is ran through the ANSYS Workbench software package and therefore relies on the successful installation of ANSYS and its dependencies. Some of the dependencies include:
