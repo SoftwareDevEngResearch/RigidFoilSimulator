@@ -1,7 +1,7 @@
 [![DOI](https://zenodo.org/badge/257502422.svg)](https://zenodo.org/badge/latestdoi/257502422)
 
 # RigidFoilSimulator
-Python-based oscillating rigid foil simulation package enables novice users to get meaningful computational fluid dynamics results through a streamlined command line interface. [See instructions for Environment Variables setup here](##Environment-Variables-Setup)
+Python-based oscillating rigid foil simulation package enables novice users to get meaningful computational fluid dynamics results through a streamlined command line interface. [See instructions for Environment Variables setup here](#Environment-Variables-Setup)
 
 ## Installation
 This package can be installed via:
@@ -94,7 +94,7 @@ For running the example case, the output is demonstrated using data that is incl
 
 \*\*\*\* If the folder name is left as the default, "RigidFoilSimer_Example", the package WILL treat it as an example so be sure to change the folder name for non-example operations.
 
-## Environment Variables Setup
+# Environment Variables Setup
 To ensure that ANSYS and Visual Studio are installed correctly, check to verify the following environment variables are correctly called out:
 
 | Variable     | Allowed Values                                                                                         |
